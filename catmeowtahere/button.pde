@@ -1,3 +1,4 @@
+//Classe para facilitar a criação de butões.
 class Button {
   PImage btnImage;
   PVector btnSize;
@@ -15,8 +16,10 @@ class Button {
   }
 
   void render() {
+    pushMatrix();
     imageMode(CENTER);
     image(btnImage, btnPosition.x, btnPosition.y, btnImage.width * scale, btnImage.height * scale);
+    popMatrix();
   }
 
   boolean isMouseOnBtn() {

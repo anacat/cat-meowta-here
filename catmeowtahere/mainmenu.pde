@@ -3,13 +3,13 @@ class MainMenu implements Scene {
   Button newGameBtn;
   Button exitBtn;
 
-  ArrayList<Button> buttons = new ArrayList();
+  ArrayList<Button> buttons = new ArrayList<Button>();
 
   MainMenu(){
-    backgroundImage = loadImage("images/mainmenu.png");
+    backgroundImage = loadImage("images/mainmenu/mainmenu.png");
 
-    newGameBtn = new Button("images/newgame.png", new PVector(width/2, height/2+60));
-    exitBtn = new Button("images/exit.png", new PVector(width/2, height/2+160));
+    newGameBtn = new Button("images/mainmenu/newgame.png", new PVector(width/2, height/2+60));
+    exitBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
 
     buttons.add(newGameBtn);
     buttons.add(exitBtn);
@@ -31,11 +31,10 @@ class MainMenu implements Scene {
   }
 
   void checkForPresses() {
-    if(newGameBtn.isMouseOnBtn()) {
-      newGameBtn.pressed();
-    }
-    else if(exitBtn.isMouseOnBtn()) {
-      exit();
+    for(Button btn : buttons) {
+      if(btn.isMouseOnBtn()) {
+        btn.pressed();
+      }
     }
   }
 
@@ -43,5 +42,21 @@ class MainMenu implements Scene {
     for(Button btn : buttons) {
       btn.released();
     }
+  }
+
+  void checkForClicks() {
+    if(newGameBtn.isMouseOnBtn()) {
+      currentScene = tailGame;
+      cursor(ARROW);
+    }
+    else if(exitBtn.isMouseOnBtn()) {
+      exit();
+    }
+  }
+
+  void checkForKeyPresses() {
+  }
+
+  void restartScene() {
   }
 }
