@@ -15,6 +15,8 @@ class DrownFishGame extends GameScene {
   int waterDrank;
 
   DrownFishGame() {
+    super();
+
     playerTongueImage = loadImage("images/drownfishgame/playerTongue.png");
     playerNoTongueImage = loadImage("images/drownfishgame/playerNoTongue.png");
     fishBowl = loadImage("images/drownfishgame/bowl.png");
@@ -40,7 +42,7 @@ class DrownFishGame extends GameScene {
 
   void update() {
     //update fishbowl sprites
-    
+
     if(keyPressed) {
       checkForKeyPresses();
     }
@@ -96,8 +98,10 @@ class DrownFishGame extends GameScene {
 
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      startScene();
+
+      mainMenu.startScene();
       currentScene = mainMenu;
-      restartScene();
     }
   }
 
@@ -118,14 +122,12 @@ class DrownFishGame extends GameScene {
     }
   }
 
-  void restartScene() {
+  void startScene() {
     playerState = playerNoTongueImage;
     playerSize = 0.5f;
     waterDrank = 0;
     pressingKey = false;
 
-    gameTime = 3f;
-
-    super.restartScene();
+    super.startScene();
   }
 }

@@ -15,6 +15,8 @@ class SlapCatGame extends GameScene {
   float enemySpeed = 7f;
 
   SlapCatGame() {
+    super();
+
     playerImage = loadImage("images/slapcatgame/player.png");
     catArm = loadImage("images/slapcatgame/catpaw.png");
     otherCatImage1 = loadImage("images/slapcatgame/othercat1.png");
@@ -100,8 +102,10 @@ class SlapCatGame extends GameScene {
 
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      startScene();
+
+      mainMenu.startScene();
       currentScene = mainMenu;
-      restartScene();
     }
   }
 
@@ -109,14 +113,13 @@ class SlapCatGame extends GameScene {
 
   }
 
-  void restartScene() {
+  void startScene() {
     playerSize = 0.7f;
     enemyPosition = new PVector(-otherCatImage1.width * playerSize, 200);
     pawPosition = new PVector();
 
     enemyImage = otherCatImage1;
-    gameTime = 2.5f;
 
-    super.restartScene();
+    super.startScene();
   }
 }

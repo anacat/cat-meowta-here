@@ -16,9 +16,14 @@ public class catmeowtahere extends PApplet {
 
 Scene currentScene; //objecto para guardar a cena atual.
 MainMenu mainMenu;
+
 TailGame tailGame;
 SlapCatGame slapGame;
 DrownFishGame drownFishGame;
+HitTheVaseGame hitTheVaseGame;
+
+ArrayList<GameScene> miniGames = new ArrayList<GameScene>();
+ArrayList<Integer> playableGames;
 
 public void setup() {
   
@@ -30,8 +35,40 @@ public void setup() {
   tailGame = new TailGame();
   slapGame = new SlapCatGame();
   drownFishGame = new DrownFishGame();
+  hitTheVaseGame = new HitTheVaseGame();
+
+  miniGames.add(tailGame);
+  miniGames.add(slapGame);
+  miniGames.add(drownFishGame);
+  miniGames.add(hitTheVaseGame);
+
+  playableGames = new ArrayList<Integer>(miniGames.size());
+
+  playableGames.add(0);
+  playableGames.add(1);
+  playableGames.add(2);
+  playableGames.add(3);
 
   currentScene = mainMenu;
+}
+
+public Scene getNextMiniGame() {
+  if(playableGames.size() > 0) {
+    int randomScene = (int)random(0, playableGames.size());
+
+    int sceneNumber = playableGames.get(randomScene);
+
+    playableGames.remove(randomScene);
+
+    Scene scene = miniGames.get(sceneNumber);
+    scene.startScene();
+
+    return scene;
+  }
+  else {
+    mainMenu.startScene();
+    return mainMenu;
+  }
 }
 
 public void draw() {
@@ -110,6 +147,8 @@ class DrownFishGame extends GameScene {
   int waterDrank;
 
   DrownFishGame() {
+    super();
+
     playerTongueImage = loadImage("images/drownfishgame/playerTongue.png");
     playerNoTongueImage = loadImage("images/drownfishgame/playerNoTongue.png");
     fishBowl = loadImage("images/drownfishgame/bowl.png");
@@ -135,7 +174,7 @@ class DrownFishGame extends GameScene {
 
   public void update() {
     //update fishbowl sprites
-    
+
     if(keyPressed) {
       checkForKeyPresses();
     }
@@ -191,8 +230,10 @@ class DrownFishGame extends GameScene {
 
   public void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      startScene();
+
+      mainMenu.startScene();
       currentScene = mainMenu;
-      restartScene();
     }
   }
 
@@ -213,15 +254,13 @@ class DrownFishGame extends GameScene {
     }
   }
 
-  public void restartScene() {
+  public void startScene() {
     playerState = playerNoTongueImage;
     playerSize = 0.5f;
     waterDrank = 0;
     pressingKey = false;
 
-    gameTime = 3f;
-
-    super.restartScene();
+    super.startScene();
   }
 }
 abstract class GameScene implements Scene {
@@ -297,8 +336,8 @@ abstract class GameScene implements Scene {
     }
 
     if (gameTimer/1000 > 3f) {
-      currentScene = mainMenu; //chose rnadom scene
-      restartScene();
+      startScene();
+      currentScene = getNextMiniGame(); //chose rnadom scene
     }
   }
 
@@ -312,8 +351,9 @@ abstract class GameScene implements Scene {
   public void checkForClicks() {}
   public void checkForKeyPresses() {}
 
-  public void restartScene() {
+  public void startScene() {
     restartedTimer = false;
+    timerStart = millis();
     gameTimer = millis() - timerStart;
 
     status = GameStatus.GAME_STARTING;
@@ -322,8 +362,121 @@ abstract class GameScene implements Scene {
 static class GameStatus {
   static final int GAME_OVER = 3;
   static final int GAME_WIN = 2;
-  static final int  GAME_RUNNING = 1;
+  static final int GAME_RUNNING = 1;
   static final int GAME_STARTING = 0;
+}
+class HitTheVaseGame extends GameScene {
+  PImage backgroundImage;
+  Button gameOverBtn;
+
+  PImage playerImage;
+  PImage catArm;
+  PImage vaseImage;
+  PVector pawPosition;
+  PVector enemyPosition;
+  float enemyRotation;
+
+  HitTheVaseGame() {
+    super();
+
+    playerImage = loadImage("images/hitthevasegame/player.png");
+    catArm = loadImage("images/hitthevasegame/paw.png");
+    vaseImage = loadImage("images/hitthevasegame/vase.png");
+    gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
+
+    pawPosition = new PVector();
+    enemyPosition = new PVector(width/2 - 125, height/2 + 50);
+    enemyRotation = 0;
+
+    gameTime = 1f;
+  }
+
+  public void drawScene() {
+    background(255);
+
+    imageMode(CENTER);
+    updatePawPosition();
+    image(playerImage, width/2 + 125, height/2);
+
+    pushMatrix();
+    translate(enemyPosition.x, enemyPosition.y);
+    rotate(enemyRotation);
+    image(vaseImage, 0, 0);
+    popMatrix();
+
+    super.drawScene();
+  }
+
+  public void updatePawPosition() {
+    pawPosition.x = constrain(((catArm.width)/2) + mouseX, 350, width - 250);
+    pawPosition.y = constrain(mouseY - ((catArm.height)/2), 145, height - 150);
+
+    image(catArm, pawPosition.x, pawPosition.y);
+  }
+
+  public void checkColision() {
+    if(pawPosition.x > enemyPosition.x && pawPosition.x < enemyPosition.x + (vaseImage.width)
+      && pawPosition.y > 225 && pmouseX != mouseX) {
+      status = GameStatus.GAME_WIN;
+    }
+  }
+
+  public @Override void gameStartDraw() {
+    fill(50);
+    text("slap teh vase", width/2, height/2);
+  }
+
+  public @Override void gameRunningDraw() {
+    fill(0);
+    rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
+
+    checkColision();
+  }
+
+  public @Override void gameOverDraw() {
+    fill(0);
+    rect(10, 10, width-20, 10);
+
+    fill(50);
+    text("game over binch", width/2, height/2);
+    gameOverBtn.render();
+  }
+
+  public @Override void gameWinDraw() {
+    textSize(32);
+    fill(50);
+    text("oh shit!!!!", width/2, height/2);
+
+    enemyPosition = new PVector(width/2 - 100, height/2 + 150);
+    enemyRotation = -HALF_PI;
+  }
+
+  public void checkForPresses() {
+    if(gameOverBtn.isMouseOnBtn()) {
+      gameOverBtn.pressed();
+    }
+  }
+
+  public void checkForReleases() {
+    gameOverBtn.released();
+  }
+
+  public void checkForClicks() {
+    if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      startScene();
+
+      mainMenu.startScene();
+      currentScene = mainMenu;
+    }
+  }
+
+  public void startScene() {
+    pawPosition = new PVector();
+    enemyPosition = new PVector(width/2 - 125, height/2 + 50);
+    enemyRotation = 0;
+
+    super.startScene();
+  }
 }
 class MainMenu implements Scene {
   PImage backgroundImage;
@@ -373,7 +526,7 @@ class MainMenu implements Scene {
 
   public void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = drownFishGame;
+      currentScene = getNextMiniGame();
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {
@@ -384,7 +537,11 @@ class MainMenu implements Scene {
   public void checkForKeyPresses() {
   }
 
-  public void restartScene() {
+  public void startScene() {
+    playableGames.add(0);
+    playableGames.add(1);
+    playableGames.add(2);
+    playableGames.add(3);
   }
 }
 //Uso de uma inteface para facilitar o manuseamento de cenas na classe principal. Todas as cenas t\u00eam os mesmos m\u00e9todos.
@@ -394,7 +551,7 @@ interface Scene {
   public void checkForReleases();
   public void checkForClicks();
   public void checkForKeyPresses();
-  public void restartScene();
+  public void startScene();
 }
 class SlapCatGame extends GameScene {
   Button gameOverBtn;
@@ -413,6 +570,8 @@ class SlapCatGame extends GameScene {
   float enemySpeed = 7f;
 
   SlapCatGame() {
+    super();
+
     playerImage = loadImage("images/slapcatgame/player.png");
     catArm = loadImage("images/slapcatgame/catpaw.png");
     otherCatImage1 = loadImage("images/slapcatgame/othercat1.png");
@@ -498,8 +657,10 @@ class SlapCatGame extends GameScene {
 
   public void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      startScene();
+
+      mainMenu.startScene();
       currentScene = mainMenu;
-      restartScene();
     }
   }
 
@@ -507,15 +668,14 @@ class SlapCatGame extends GameScene {
 
   }
 
-  public void restartScene() {
+  public void startScene() {
     playerSize = 0.7f;
     enemyPosition = new PVector(-otherCatImage1.width * playerSize, 200);
     pawPosition = new PVector();
 
     enemyImage = otherCatImage1;
-    gameTime = 2.5f;
 
-    super.restartScene();
+    super.startScene();
   }
 }
 class TailGame extends GameScene {
@@ -534,6 +694,8 @@ class TailGame extends GameScene {
 
 
   TailGame() {
+    super();
+
     playerImage = loadImage("images/tailgame/player.png");
     playerFinishImage = loadImage("images/tailgame/playerFinish.png");
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
@@ -629,8 +791,10 @@ class TailGame extends GameScene {
 
   public void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      startScene();
+
+      mainMenu.startScene();
       currentScene = mainMenu;
-      restartScene();
     }
   }
 
@@ -647,14 +811,14 @@ class TailGame extends GameScene {
     }
   }
 
-  public void restartScene() {
+  public void startScene() {
     keyTimerStart = millis();
     timerStart = millis();
     playerImageToDraw = playerImage;
     rotateAngle = -1f;
     speed = -0.1f;
 
-    super.restartScene();
+    super.startScene();
   }
 }
   public void settings() {  size(720, 480); }

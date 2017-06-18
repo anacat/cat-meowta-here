@@ -71,8 +71,8 @@ abstract class GameScene implements Scene {
     }
 
     if (gameTimer/1000 > 3f) {
-      currentScene = mainMenu; //chose rnadom scene
-      restartScene();
+      startScene();
+      currentScene = getNextMiniGame(); //chose rnadom scene
     }
   }
 
@@ -86,8 +86,9 @@ abstract class GameScene implements Scene {
   void checkForClicks() {}
   void checkForKeyPresses() {}
 
-  void restartScene() {
+  void startScene() {
     restartedTimer = false;
+    timerStart = millis();
     gameTimer = millis() - timerStart;
 
     status = GameStatus.GAME_STARTING;

@@ -5,5 +5,5 @@ interface Scene {
   void checkForReleases();
   void checkForClicks();
   void checkForKeyPresses();
-  void restartScene();
+  void startScene();
 }

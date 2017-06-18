@@ -14,6 +14,8 @@ class TailGame extends GameScene {
 
 
   TailGame() {
+    super();
+
     playerImage = loadImage("images/tailgame/player.png");
     playerFinishImage = loadImage("images/tailgame/playerFinish.png");
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
@@ -109,8 +111,10 @@ class TailGame extends GameScene {
 
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      startScene();
+
+      mainMenu.startScene();
       currentScene = mainMenu;
-      restartScene();
     }
   }
 
@@ -127,13 +131,13 @@ class TailGame extends GameScene {
     }
   }
 
-  void restartScene() {
+  void startScene() {
     keyTimerStart = millis();
     timerStart = millis();
     playerImageToDraw = playerImage;
     rotateAngle = -1f;
     speed = -0.1f;
 
-    super.restartScene();
+    super.startScene();
   }
 }

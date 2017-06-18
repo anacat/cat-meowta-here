@@ -46,7 +46,7 @@ class MainMenu implements Scene {
 
   void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = drownFishGame;
+      currentScene = getNextMiniGame();
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {
@@ -57,6 +57,10 @@ class MainMenu implements Scene {
   void checkForKeyPresses() {
   }
 
-  void restartScene() {
+  void startScene() {
+    playableGames.add(0);
+    playableGames.add(1);
+    playableGames.add(2);
+    playableGames.add(3);
   }
 }
