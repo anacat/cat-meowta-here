@@ -1,4 +1,4 @@
-class TailGame implements Scene {
+class TailGame extends GameScene {
   PImage backgroundImage;
   PImage playerImage;
   PImage playerFinishImage;
@@ -13,20 +13,14 @@ class TailGame implements Scene {
   boolean pressingKey = false;
   boolean restartedTimer;
 
-  float gameTimer;
-  float timerStart;
-
-  int status;
 
   TailGame() {
     playerImage = loadImage("images/tailgame/player.png");
     playerFinishImage = loadImage("images/tailgame/playerFinish.png");
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
     keyTimerStart = millis();
-    timerStart = millis();
 
     playerImageToDraw = playerImage;
-    status = GameStatus.GAME_STARTING;
   }
 
   void drawScene() {
@@ -43,23 +37,10 @@ class TailGame implements Scene {
 
     textAlign(CENTER);
 
-    switch(status) {
-      case GameStatus.GAME_STARTING:
-        gameStart();
-        break;
-      case GameStatus.GAME_RUNNING:
-        gameRunning();
-        break;
-      case GameStatus.GAME_OVER:
-        gameOver();
-        break;
-      case GameStatus.GAME_WIN:
-        gameWin();
-        break;
-    }
+    super.drawScene();
   }
 
-  void gameStart() {
+  @Override void gameStart() {
     if(gameTimer/1000 < 3f) {
       fill(50);
       text("catch a tail", width/2, height/2);
@@ -71,7 +52,7 @@ class TailGame implements Scene {
     }
   }
 
-  void gameRunning() {
+  @Override void gameRunning() {
     fill(0);
     rect(10, 10, ((width-20)/7f) * (gameTimer/1000), 10);
 
@@ -84,7 +65,7 @@ class TailGame implements Scene {
     }
   }
 
-  void gameOver() {
+  @Override void gameOver() {
     fill(0);
     rect(10, 10, width-20, 10);
 
@@ -93,7 +74,7 @@ class TailGame implements Scene {
     gameOverBtn.render();
   }
 
-  void gameWin() {
+  @Override void gameWin() {
     textSize(32);
     fill(50);
     text("u have caught ur tail", width/2, height/2);
@@ -158,13 +139,15 @@ class TailGame implements Scene {
   }
 
   void checkForKeyPresses() {
-    if(key == ' ' && !pressingKey) {
-      pressingKey = true;
-      keyTimerStart = millis(); //reinicia o contador
-      speed = constrain(speed - 0.05f, -0.5f, -0.1f);
-    }
-    else if(key != ' '){
-      pressingKey = false;
+    if(status == GameStatus.GAME_RUNNING) {
+      if(key == ' ' && !pressingKey) {
+        pressingKey = true;
+        keyTimerStart = millis(); //reinicia o contador
+        speed = constrain(speed - 0.05f, -0.5f, -0.1f);
+      }
+      else if(key != ' '){
+        pressingKey = false;
+      }
     }
   }
 
@@ -174,6 +157,7 @@ class TailGame implements Scene {
     playerImageToDraw = playerImage;
     rotateAngle = -1f;
     speed = -0.1f;
+    restartedTimer = false;
 
     gameTimer = millis() - timerStart;
     status = GameStatus.GAME_STARTING;

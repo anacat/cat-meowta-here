@@ -89,6 +89,62 @@ class Button {
     isPressed = false;
   }
 }
+abstract class GameScene implements Scene {
+  PImage backgroundImage;
+
+  protected float gameTimer;
+  protected float timerStart;
+
+  protected int status;
+
+  GameScene() {
+    timerStart = millis();
+
+    status = GameStatus.GAME_STARTING;
+  }
+
+  public void drawScene() {
+    switch(status) {
+      case GameStatus.GAME_STARTING:
+        gameStart();
+        break;
+      case GameStatus.GAME_RUNNING:
+        gameRunning();
+        break;
+      case GameStatus.GAME_OVER:
+        gameOver();
+        break;
+      case GameStatus.GAME_WIN:
+        gameWin();
+        break;
+    }
+  }
+
+  public abstract void gameStart();
+  public abstract void gameRunning();
+  public abstract void gameOver();
+  public abstract void gameWin();
+
+  public void checkForPresses() {
+
+  }
+
+  public void checkForReleases() {
+
+  }
+
+  public void checkForClicks() {
+
+  }
+
+ public void checkForKeyPresses() {
+
+  }
+
+  public void restartScene() {
+
+  }
+}
 static class GameStatus {
   static final int GAME_OVER = 3;
   static final int GAME_WIN = 2;
@@ -166,7 +222,7 @@ interface Scene {
   public void checkForKeyPresses();
   public void restartScene();
 }
-class TailGame implements Scene {
+class TailGame extends GameScene {
   PImage backgroundImage;
   PImage playerImage;
   PImage playerFinishImage;
@@ -181,20 +237,14 @@ class TailGame implements Scene {
   boolean pressingKey = false;
   boolean restartedTimer;
 
-  float gameTimer;
-  float timerStart;
-
-  int status;
 
   TailGame() {
     playerImage = loadImage("images/tailgame/player.png");
     playerFinishImage = loadImage("images/tailgame/playerFinish.png");
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
     keyTimerStart = millis();
-    timerStart = millis();
 
     playerImageToDraw = playerImage;
-    status = GameStatus.GAME_STARTING;
   }
 
   public void drawScene() {
@@ -211,23 +261,10 @@ class TailGame implements Scene {
 
     textAlign(CENTER);
 
-    switch(status) {
-      case GameStatus.GAME_STARTING:
-        gameStart();
-        break;
-      case GameStatus.GAME_RUNNING:
-        gameRunning();
-        break;
-      case GameStatus.GAME_OVER:
-        gameOver();
-        break;
-      case GameStatus.GAME_WIN:
-        gameWin();
-        break;
-    }
+    super.drawScene();
   }
 
-  public void gameStart() {
+  public @Override void gameStart() {
     if(gameTimer/1000 < 3f) {
       fill(50);
       text("catch a tail", width/2, height/2);
@@ -239,7 +276,7 @@ class TailGame implements Scene {
     }
   }
 
-  public void gameRunning() {
+  public @Override void gameRunning() {
     fill(0);
     rect(10, 10, ((width-20)/7f) * (gameTimer/1000), 10);
 
@@ -252,7 +289,7 @@ class TailGame implements Scene {
     }
   }
 
-  public void gameOver() {
+  public @Override void gameOver() {
     fill(0);
     rect(10, 10, width-20, 10);
 
@@ -261,7 +298,7 @@ class TailGame implements Scene {
     gameOverBtn.render();
   }
 
-  public void gameWin() {
+  public @Override void gameWin() {
     textSize(32);
     fill(50);
     text("u have caught ur tail", width/2, height/2);
@@ -319,20 +356,22 @@ class TailGame implements Scene {
   }
 
   public void checkForClicks() {
-    if(gameOverBtn.isMouseOnBtn()) {
+    if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
       currentScene = mainMenu;
       restartScene();
     }
   }
 
   public void checkForKeyPresses() {
-    if(key == ' ' && !pressingKey) {
-      pressingKey = true;
-      keyTimerStart = millis(); //reinicia o contador
-      speed = constrain(speed - 0.05f, -0.5f, -0.1f);
-    }
-    else if(key != ' '){
-      pressingKey = false;
+    if(status == GameStatus.GAME_RUNNING) {
+      if(key == ' ' && !pressingKey) {
+        pressingKey = true;
+        keyTimerStart = millis(); //reinicia o contador
+        speed = constrain(speed - 0.05f, -0.5f, -0.1f);
+      }
+      else if(key != ' '){
+        pressingKey = false;
+      }
     }
   }
 
@@ -342,8 +381,9 @@ class TailGame implements Scene {
     playerImageToDraw = playerImage;
     rotateAngle = -1f;
     speed = -0.1f;
+    restartedTimer = false;
 
-    gameTimer = millis() - timerStart;    
+    gameTimer = millis() - timerStart;
     status = GameStatus.GAME_STARTING;
   }
 }
