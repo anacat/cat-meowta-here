@@ -56,6 +56,7 @@ class HitTheVaseGame extends GameScene {
 
   @Override void gameStartDraw() {
     fill(50);
+    textSize(50);
     text("slap teh vase", width/2, height/2);
   }
 

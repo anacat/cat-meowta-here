@@ -64,6 +64,7 @@ class SlapCatGame extends GameScene {
 
   @Override void gameStartDraw() {
     fill(50);
+    textSize(50);
     text("slap teh cat", width/2, height/2);
   }
 

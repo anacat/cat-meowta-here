@@ -46,7 +46,7 @@ class MainMenu implements Scene {
 
   void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = getNextMiniGame();
+      currentScene = firstScene;
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {

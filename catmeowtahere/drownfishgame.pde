@@ -61,6 +61,7 @@ class DrownFishGame extends GameScene {
 
   @Override void gameStartDraw() {
     fill(50);
+    textSize(50);
     text("drink all teh water", width/2, height/2);
   }
 

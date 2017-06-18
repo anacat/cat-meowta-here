@@ -43,9 +43,9 @@ class TailGame extends GameScene {
   }
 
   @Override void gameStartDraw() {
-      fill(50);
-      text("catch a tail", width/2, height/2);
-
+    fill(50);
+    textSize(50);
+    text("catch a tail", width/2, height/2);
   }
 
   @Override void gameRunningDraw() {

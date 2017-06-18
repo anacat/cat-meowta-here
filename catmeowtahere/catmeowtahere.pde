@@ -1,5 +1,7 @@
 Scene currentScene; //objecto para guardar a cena atual.
 MainMenu mainMenu;
+FirstScene firstScene;
+FinalScene finalScene;
 
 TailGame tailGame;
 SlapCatGame slapGame;
@@ -16,6 +18,9 @@ void setup() {
   textFont(loadFont("MicrosoftYaHeiLight-48.vlw"));
 
   mainMenu = new MainMenu();
+  firstScene = new FirstScene();
+  finalScene = new FinalScene();
+
   tailGame = new TailGame();
   slapGame = new SlapCatGame();
   drownFishGame = new DrownFishGame();
@@ -50,8 +55,7 @@ Scene getNextMiniGame() {
     return scene;
   }
   else {
-    mainMenu.startScene();
-    return mainMenu;
+    return finalScene;
   }
 }
 

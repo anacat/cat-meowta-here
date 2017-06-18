@@ -16,6 +16,8 @@ public class catmeowtahere extends PApplet {
 
 Scene currentScene; //objecto para guardar a cena atual.
 MainMenu mainMenu;
+FirstScene firstScene;
+FinalScene finalScene;
 
 TailGame tailGame;
 SlapCatGame slapGame;
@@ -32,6 +34,9 @@ public void setup() {
   textFont(loadFont("MicrosoftYaHeiLight-48.vlw"));
 
   mainMenu = new MainMenu();
+  firstScene = new FirstScene();
+  finalScene = new FinalScene();
+
   tailGame = new TailGame();
   slapGame = new SlapCatGame();
   drownFishGame = new DrownFishGame();
@@ -66,8 +71,7 @@ public Scene getNextMiniGame() {
     return scene;
   }
   else {
-    mainMenu.startScene();
-    return mainMenu;
+    return finalScene;
   }
 }
 
@@ -193,6 +197,7 @@ class DrownFishGame extends GameScene {
 
   public @Override void gameStartDraw() {
     fill(50);
+    textSize(50);
     text("drink all teh water", width/2, height/2);
   }
 
@@ -261,6 +266,95 @@ class DrownFishGame extends GameScene {
     pressingKey = false;
 
     super.startScene();
+  }
+}
+class FinalScene implements Scene {
+  Button okBtn;
+
+  FinalScene() {
+    okBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
+  }
+
+  public void drawScene() {
+    background(255);
+
+    //maybe put an animated gif and show the text at the end of the gif?
+
+    fill(0);
+    textSize(20);
+    textAlign(CENTER);
+    text("u have done it!!!", width/2, height/2);
+
+    okBtn.render();
+  }
+
+  public void checkForPresses() {
+    if(okBtn.isMouseOnBtn()) {
+      okBtn.pressed();
+    }
+  }
+
+  public void checkForReleases() {
+    okBtn.released();
+  }
+
+  public void checkForClicks() {
+    if(okBtn.isMouseOnBtn()) {
+      mainMenu.startScene();
+      currentScene = mainMenu;
+    }
+  }
+
+  public void checkForKeyPresses() {
+
+  }
+
+  public void startScene() {
+
+  }
+}
+class FirstScene implements Scene{
+  Button okBtn;
+
+  FirstScene() {
+    okBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
+  }
+
+  public void drawScene() {
+    background(255);
+
+    //maybe put an animated gif and show the text at the end of the gif?
+
+    fill(0);
+    textSize(20);
+    textAlign(CENTER);
+    text("u are a catte and ur home alone to do as u please.\ncause some mayhem or whatever", width/2, height/2);
+
+    okBtn.render();
+  }
+
+  public void checkForPresses() {
+    if(okBtn.isMouseOnBtn()) {
+      okBtn.pressed();
+    }
+  }
+
+  public void checkForReleases() {
+    okBtn.released();
+  }
+
+  public void checkForClicks() {
+    if(okBtn.isMouseOnBtn()) {
+      currentScene = getNextMiniGame();
+    }
+  }
+
+  public void checkForKeyPresses() {
+
+  }
+
+  public void startScene() {
+
   }
 }
 abstract class GameScene implements Scene {
@@ -423,6 +517,7 @@ class HitTheVaseGame extends GameScene {
 
   public @Override void gameStartDraw() {
     fill(50);
+    textSize(50);
     text("slap teh vase", width/2, height/2);
   }
 
@@ -526,7 +621,7 @@ class MainMenu implements Scene {
 
   public void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = getNextMiniGame();
+      currentScene = firstScene;
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {
@@ -619,6 +714,7 @@ class SlapCatGame extends GameScene {
 
   public @Override void gameStartDraw() {
     fill(50);
+    textSize(50);
     text("slap teh cat", width/2, height/2);
   }
 
@@ -723,9 +819,9 @@ class TailGame extends GameScene {
   }
 
   public @Override void gameStartDraw() {
-      fill(50);
-      text("catch a tail", width/2, height/2);
-
+    fill(50);
+    textSize(50);
+    text("catch a tail", width/2, height/2);
   }
 
   public @Override void gameRunningDraw() {
