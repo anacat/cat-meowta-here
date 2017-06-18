@@ -11,7 +11,6 @@ class TailGame extends GameScene {
   float keyTimerStart;
   float keyTimer;
   boolean pressingKey = false;
-  boolean restartedTimer;
 
 
   TailGame() {
@@ -21,6 +20,7 @@ class TailGame extends GameScene {
     keyTimerStart = millis();
 
     playerImageToDraw = playerImage;
+    gameTime = 7f;
   }
 
   void drawScene() {
@@ -40,32 +40,22 @@ class TailGame extends GameScene {
     super.drawScene();
   }
 
-  @Override void gameStart() {
-    if(gameTimer/1000 < 3f) {
+  @Override void gameStartDraw() {
       fill(50);
       text("catch a tail", width/2, height/2);
-      gameTimer = millis() - timerStart;
-    }
-    else {
-      timerStart = millis();
-      status = GameStatus.GAME_RUNNING;
-    }
+
   }
 
-  @Override void gameRunning() {
+  @Override void gameRunningDraw() {
     fill(0);
-    rect(10, 10, ((width-20)/7f) * (gameTimer/1000), 10);
+    rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-    if(gameTimer/1000 > 7f) {
-      status = GameStatus.GAME_OVER;
-    }
-    else {
       rotateAngle += speed;
       gameTimer = millis() - timerStart;
-    }
+
   }
 
-  @Override void gameOver() {
+  @Override void gameOverDraw() {
     fill(0);
     rect(10, 10, width-20, 10);
 
@@ -74,25 +64,12 @@ class TailGame extends GameScene {
     gameOverBtn.render();
   }
 
-  @Override void gameWin() {
+  @Override void gameWinDraw() {
     textSize(32);
     fill(50);
     text("u have caught ur tail", width/2, height/2);
+
     playerImageToDraw = playerFinishImage;
-
-    if(!restartedTimer) {
-      timerStart = millis();
-      gameTimer = millis() - timerStart;
-      restartedTimer = true;
-    }
-    else {
-      gameTimer = millis() - timerStart;
-    }
-
-    if (gameTimer/1000 > 3f) {
-      currentScene = mainMenu;
-      restartScene();
-    }
   }
 
   void inputs() {
@@ -157,9 +134,7 @@ class TailGame extends GameScene {
     playerImageToDraw = playerImage;
     rotateAngle = -1f;
     speed = -0.1f;
-    restartedTimer = false;
 
-    gameTimer = millis() - timerStart;
-    status = GameStatus.GAME_STARTING;
+    super.restartScene();
   }
 }
