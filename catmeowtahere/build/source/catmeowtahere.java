@@ -18,6 +18,7 @@ Scene currentScene; //objecto para guardar a cena atual.
 MainMenu mainMenu;
 TailGame tailGame;
 SlapCatGame slapGame;
+DrownFishGame drownFishGame;
 
 public void setup() {
   
@@ -28,6 +29,7 @@ public void setup() {
   mainMenu = new MainMenu();
   tailGame = new TailGame();
   slapGame = new SlapCatGame();
+  drownFishGame = new DrownFishGame();
 
   currentScene = mainMenu;
 }
@@ -89,6 +91,137 @@ class Button {
   public void released() {
     scale = 1f;
     isPressed = false;
+  }
+}
+class DrownFishGame extends GameScene {
+  PImage playerTongueImage;
+  PImage playerNoTongueImage;
+  PImage playerState;
+  Button gameOverBtn;
+
+  PImage fishBowl; //sprites
+
+  float playerSize;
+
+  float keyTimerStart;
+  float keyTimer;
+  boolean pressingKey = false;
+
+  int waterDrank;
+
+  DrownFishGame() {
+    playerTongueImage = loadImage("images/drownfishgame/playerTongue.png");
+    playerNoTongueImage = loadImage("images/drownfishgame/playerNoTongue.png");
+    fishBowl = loadImage("images/drownfishgame/bowl.png");
+
+    gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
+
+    playerState = playerNoTongueImage;
+    playerSize = 0.5f;
+    waterDrank = 0;
+
+    gameTime = 3f;
+  }
+
+  public void drawScene() {
+    background(255);
+    imageMode(CENTER);
+    image(playerState, width/2, height/2, playerState.width * playerSize, playerState.height * playerSize);
+
+    image(fishBowl, width/2 - 50, height/2);
+
+    super.drawScene();
+  }
+
+  public void update() {
+    //update fishbowl sprites
+    
+    if(keyPressed) {
+      checkForKeyPresses();
+    }
+    else {
+      pressingKey = false;
+    }
+
+    if(pressingKey) {
+      keyTimer = millis() - keyTimerStart;
+
+      if(keyTimer/1000 > 1f) {
+        pressingKey = false;
+      }
+    }
+  }
+
+  public @Override void gameStartDraw() {
+    fill(50);
+    text("drink all teh water", width/2, height/2);
+  }
+
+  public @Override void gameRunningDraw() {
+    fill(0);
+    rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
+
+    update();
+  }
+
+  public @Override void gameOverDraw() {
+    fill(0);
+    rect(10, 10, width-20, 10);
+
+    fill(50);
+    text("game over binch", width/2, height/2);
+    gameOverBtn.render();
+  }
+
+  public @Override void gameWinDraw() {
+    textSize(32);
+    fill(50);
+    text("u monster", width/2, height/2);
+  }
+
+  public void checkForPresses() {
+    if(gameOverBtn.isMouseOnBtn()) {
+      gameOverBtn.pressed();
+    }
+  }
+
+  public void checkForReleases() {
+    gameOverBtn.released();
+  }
+
+  public void checkForClicks() {
+    if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
+      currentScene = mainMenu;
+      restartScene();
+    }
+  }
+
+  public void checkForKeyPresses() {
+    if(key == ' ' && !pressingKey) {
+      playerState = playerState == playerTongueImage ? playerNoTongueImage : playerTongueImage;
+      pressingKey = true;
+      keyTimerStart = millis();
+
+      waterDrank++;
+
+      if(waterDrank == 20) {
+        status = GameStatus.GAME_WIN;
+      }
+    }
+    else if (key != ' ') {
+      pressingKey = false;
+    }
+  }
+
+  public void restartScene() {
+    playerState = playerNoTongueImage;
+    playerSize = 0.5f;
+    waterDrank = 0;
+    pressingKey = false;
+
+    gameTime = 3f;
+
+    super.restartScene();
   }
 }
 abstract class GameScene implements Scene {
@@ -240,7 +373,7 @@ class MainMenu implements Scene {
 
   public void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = slapGame;
+      currentScene = drownFishGame;
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {
@@ -437,9 +570,8 @@ class TailGame extends GameScene {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-      rotateAngle += speed;
-      gameTimer = millis() - timerStart;
-
+    rotateAngle += speed;
+    gameTimer = millis() - timerStart;
   }
 
   public @Override void gameOverDraw() {

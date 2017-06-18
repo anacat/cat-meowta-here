@@ -50,9 +50,8 @@ class TailGame extends GameScene {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-      rotateAngle += speed;
-      gameTimer = millis() - timerStart;
-
+    rotateAngle += speed;
+    gameTimer = millis() - timerStart;
   }
 
   @Override void gameOverDraw() {

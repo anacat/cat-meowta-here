@@ -2,6 +2,7 @@ Scene currentScene; //objecto para guardar a cena atual.
 MainMenu mainMenu;
 TailGame tailGame;
 SlapCatGame slapGame;
+DrownFishGame drownFishGame;
 
 void setup() {
   size(720, 480);
@@ -12,6 +13,7 @@ void setup() {
   mainMenu = new MainMenu();
   tailGame = new TailGame();
   slapGame = new SlapCatGame();
+  drownFishGame = new DrownFishGame();
 
   currentScene = mainMenu;
 }

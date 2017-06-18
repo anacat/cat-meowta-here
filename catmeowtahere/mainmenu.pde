@@ -46,7 +46,7 @@ class MainMenu implements Scene {
 
   void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = slapGame;
+      currentScene = drownFishGame;
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {
