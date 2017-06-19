@@ -17,8 +17,9 @@ class Button {
 
   void render() {
     pushMatrix();
+    translate(btnPosition.x, btnPosition.y);
     imageMode(CENTER);
-    image(btnImage, btnPosition.x, btnPosition.y, btnImage.width * scale, btnImage.height * scale);
+    image(btnImage, 0, 0, btnImage.width * scale, btnImage.height * scale);
     popMatrix();
   }
 

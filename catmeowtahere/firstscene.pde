@@ -1,14 +1,20 @@
 class FirstScene implements Scene{
   Button okBtn;
+  //AnimatedSprite cat;
 
   FirstScene() {
     okBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
+    /*cat = new AnimatedSprite("images/cat.png", 6, 2);
+
+    cat.setAnimation(0, 11, 10, true);
+    cat.spriteScale = new PVector(1, 1);
+    cat.position = new PVector(100, 20);*/
   }
 
   void drawScene() {
     background(255);
 
-    //maybe put an animated gif and show the text at the end of the gif?
+    //cat.update();
 
     fill(0);
     textSize(20);
