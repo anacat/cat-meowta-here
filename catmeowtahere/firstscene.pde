@@ -1,3 +1,6 @@
+//Cena de inicial dos mini jogos para dar algum contexto
+//desenha um botão e apresenta imagens relativas à cena incial
+//contém um botão para começar os jogos
 class FirstScene implements Scene{
   Button okBtn;
   //AnimatedSprite cat;
@@ -24,6 +27,7 @@ class FirstScene implements Scene{
     okBtn.render();
   }
 
+  //verifica inputs do rato para os botões da cena
   void checkForPresses() {
     if(okBtn.isMouseOnBtn()) {
       okBtn.pressed();

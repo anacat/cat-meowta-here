@@ -1,3 +1,4 @@
+//Mini jogo de beber a água do aquário. Classe filha de GameScene.
 class DrownFishGame extends GameScene {
   PImage playerTongueImage;
   PImage playerNoTongueImage;
@@ -14,8 +15,9 @@ class DrownFishGame extends GameScene {
 
   int waterDrank;
 
+  //inicia os elementos do jogo
   DrownFishGame() {
-    super();
+    super(); //chama o construtor do pai.
 
     playerTongueImage = loadImage("images/drownfishgame/playerTongue.png");
     playerNoTongueImage = loadImage("images/drownfishgame/playerNoTongue.png");
@@ -30,6 +32,7 @@ class DrownFishGame extends GameScene {
     gameTime = 3f;
   }
 
+  //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
     background(255);
     imageMode(CENTER);
@@ -37,12 +40,15 @@ class DrownFishGame extends GameScene {
 
     image(fishBowl, width/2 - 50, height/2);
 
+    //chama a função de draw do pai
     super.drawScene();
   }
 
+  //update da lógica de jogo
   void update() {
     //update fishbowl sprites
 
+    //verifica inputs de teclas
     if(keyPressed) {
       checkForKeyPresses();
     }
@@ -50,6 +56,7 @@ class DrownFishGame extends GameScene {
       pressingKey = false;
     }
 
+    //temporizador que impede que o utilizador possa estar a carregar sem largar a tecla. Se estiver a carregar passados mais de x segundos então o pressed key passa a false, impedindo assim um jogo facilitado.
     if(pressingKey) {
       keyTimer = millis() - keyTimerStart;
 
@@ -59,6 +66,7 @@ class DrownFishGame extends GameScene {
     }
   }
 
+  //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
     fill(50);
     textSize(50);
@@ -69,6 +77,7 @@ class DrownFishGame extends GameScene {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
+    //chama update da lógica de jogo
     update();
   }
 
@@ -87,6 +96,7 @@ class DrownFishGame extends GameScene {
     text("u monster", width/2, height/2);
   }
 
+  //verifica inputs de rato para os botões da cena
   void checkForPresses() {
     if(gameOverBtn.isMouseOnBtn()) {
       gameOverBtn.pressed();
@@ -97,6 +107,8 @@ class DrownFishGame extends GameScene {
     gameOverBtn.released();
   }
 
+  //a ação do botão só acontece quando há uma ação de clique
+  //se estiver em game over volta para o menu inicial
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
       startScene();

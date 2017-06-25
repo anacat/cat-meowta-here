@@ -1,3 +1,4 @@
+//Mini jogo de dar uma patada a outro gato. Classe filha de GameScene.
 class TailGame extends GameScene {
   PImage backgroundImage;
   PImage playerImage;
@@ -12,7 +13,7 @@ class TailGame extends GameScene {
   float keyTimer;
   boolean pressingKey = false;
 
-
+  //Inicia as variáveis do jogo. Mesmo que em todos os outros jogos.
   TailGame() {
     super();
 
@@ -22,12 +23,14 @@ class TailGame extends GameScene {
     keyTimerStart = millis();
 
     playerImageToDraw = playerImage;
-    gameTime = 7f;
+    gameTime = 7f; //tempo de jogo
   }
 
+  //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
     background(255);
 
+    //push e pop matrix porque são feitas transformações no jogador
     pushMatrix();
     imageMode(CENTER);
     translate(width/2f, height/2f);
@@ -35,13 +38,14 @@ class TailGame extends GameScene {
     image(playerImageToDraw, 0, 0);
     popMatrix();
 
-    inputs();
+    inputs(); //verifica os inputs
 
     textAlign(CENTER);
 
-    super.drawScene();
+    super.drawScene(); //chama método do pai
   }
 
+  //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
     fill(50);
     textSize(50);
@@ -52,8 +56,7 @@ class TailGame extends GameScene {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-    rotateAngle += speed;
-    gameTimer = millis() - timerStart;
+    rotateAngle += speed; //gato vai rodando ao longo do tempo
   }
 
   @Override void gameOverDraw() {
@@ -73,6 +76,7 @@ class TailGame extends GameScene {
     playerImageToDraw = playerFinishImage;
   }
 
+  //verifica os inputs
   void inputs() {
     if(keyPressed) {
       checkForKeyPresses();
@@ -81,6 +85,7 @@ class TailGame extends GameScene {
       pressingKey = false;
     }
 
+    //usa a mesma logica que o drownfishgame
     //evita que o jogador apenas clique na tecla para atingir a velocidade desejada.
     //reinicia a velocidade após x segundos a carregar ou quando nenhuma tecla é pressionada.
     if(pressingKey) {
@@ -91,14 +96,15 @@ class TailGame extends GameScene {
       }
     }
     else {
-      speed = constrain(speed + 0.01f, -0.5f, -0.1f);
+      speed = constrain(speed + 0.01f, -0.5f, -0.1f); //limita a velocidade do gato
     }
 
     if(speed == -0.5f) {
-       status = GameStatus.GAME_WIN;
+       status = GameStatus.GAME_WIN; //se a velocidade chegar ao velor definido então a condição de vitória é alcançada.
     }
   }
 
+  //verifica inputs do rato para os botões desenhados
   void checkForPresses() {
     if(gameOverBtn.isMouseOnBtn()) {
       gameOverBtn.pressed();
@@ -109,15 +115,17 @@ class TailGame extends GameScene {
     gameOverBtn.released();
   }
 
+  //na ação de clique do botão, passa para o menu inicial
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
       startScene();
 
       mainMenu.startScene();
-      currentScene = mainMenu;
+      currentScene = mainMenu; //atualiza a cena atual
     }
   }
 
+  //verifica as teclas que são premidas
   void checkForKeyPresses() {
     if(status == GameStatus.GAME_RUNNING) {
       if(key == ' ' && !pressingKey) {
@@ -131,6 +139,7 @@ class TailGame extends GameScene {
     }
   }
 
+  //reinicia os valores da cena
   void startScene() {
     keyTimerStart = millis();
     timerStart = millis();
@@ -138,6 +147,6 @@ class TailGame extends GameScene {
     rotateAngle = -1f;
     speed = -0.1f;
 
-    super.startScene();
+    super.startScene(); //chama o método do pai
   }
 }

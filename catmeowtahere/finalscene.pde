@@ -1,3 +1,6 @@
+//Cena de final dos mini jogos
+//desenha um botão e apresenta imagens relativas à cena final
+//contém um botão para voltar para o menu incial
 class FinalScene implements Scene {
   Button okBtn;
 
@@ -30,7 +33,7 @@ class FinalScene implements Scene {
 
   void checkForClicks() {
     if(okBtn.isMouseOnBtn()) {
-      mainMenu.startScene();
+      mainMenu.startScene(); //reinicia menu inicial
       currentScene = mainMenu;
     }
   }
