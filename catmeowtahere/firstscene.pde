@@ -2,27 +2,28 @@
 //desenha um botão e apresenta imagens relativas à cena incial
 //contém um botão para começar os jogos
 class FirstScene implements Scene{
+  AnimatedSprite backgroundImage;
+  AnimatedSprite title;
   Button okBtn;
-  //AnimatedSprite cat;
 
   FirstScene() {
-    okBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
-    /*cat = new AnimatedSprite("images/cat.png", 6, 2);
+    okBtn = new Button("images/firstscene/btn.png", new PVector(0, 0));
 
-    cat.setAnimation(0, 11, 10, true);
-    cat.spriteScale = new PVector(1, 1);
-    cat.position = new PVector(100, 20);*/
+    backgroundImage = new AnimatedSprite("images/firstscene/background.png", 1, 2);
+    title = new AnimatedSprite("images/firstscene/title.png", 1, 2);
+
+    backgroundImage.setAnimation(0, 1, 2, true);
+    title.setAnimation(0, 1, 2, true);
+
+    backgroundImage.position = new PVector(width/2 - backgroundImage.frameWidth, height - backgroundImage.frameHeight);
+    title.position = new PVector(width/2 - title.frameWidth/2, 50); //centra a imagem do titulo
+    okBtn.btnPosition = new PVector(width - okBtn.btnImage.width + 30, height - okBtn.btnImage.height);
   }
 
   void drawScene() {
-    background(255);
-
-    //cat.update();
-
-    fill(0);
-    textSize(20);
-    textAlign(CENTER);
-    text("u are a catte and ur home alone to do as u please.\ncause some mayhem or whatever", width/2, height/2);
+    background(249, 213, 211);
+    backgroundImage.update();
+    title.update();
 
     okBtn.render();
   }

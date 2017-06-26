@@ -3,8 +3,6 @@
 //O uso de uma classe abstrata deve-se ao uso de métodos abstratos que facilitam a implementação do jogo.
 abstract class GameScene implements Scene {
   //elementos comuns a todos os mini jogos
-  PImage backgroundImage;
-
   protected float gameTimer;
   protected float timerStart;
 

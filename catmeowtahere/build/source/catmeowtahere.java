@@ -14,83 +14,104 @@ import java.io.IOException;
 
 public class catmeowtahere extends PApplet {
 
+//"Classe" principal de toda a aplica\u00e7\u00e3o.
+//Aqui s\u00e3o criados todos os mini jogos e cenas, entre outros elementos.
+//Tamb\u00e9m s\u00e3o guardados elementos essenciais ao jogo.
 Scene currentScene; // guarda a cena atual.
+
+//Cenas
 MainMenu mainMenu;
 FirstScene firstScene;
 FinalScene finalScene;
 
+//Jogos
 TailGame tailGame;
 SlapCatGame slapGame;
 DrownFishGame drownFishGame;
 HitTheVaseGame hitTheVaseGame;
 
+//Lista com os mini jogos existentes
 ArrayList<GameScene> miniGames = new ArrayList<GameScene>();
+//Lista com o valor de jogos por jogar (usa valores inteiros para facilitar a busca depois na lista anterior).
 ArrayList<Integer> playableGames;
 
 public void setup() {
   
   //define o tipo de render da aplica\u00e7\u00e3o (para poder "limpar" o ecr\u00e3 ao usar uma imagem como fundo de uma cena).
   createGraphics(width, height, JAVA2D);
-  textFont(loadFont("MicrosoftYaHeiLight-48.vlw"));
+  textFont(loadFont("MicrosoftYaHeiLight-48.vlw")); //fonte usada pela aplica\u00e7\u00e7\u00e3o
 
+  //Inicializa\u00e7\u00e3o das cenas
   mainMenu = new MainMenu();
   firstScene = new FirstScene();
   finalScene = new FinalScene();
 
+  //Inicializa\u00e7\u00e3o dos mini jogos.
   tailGame = new TailGame();
   slapGame = new SlapCatGame();
   drownFishGame = new DrownFishGame();
   hitTheVaseGame = new HitTheVaseGame();
 
+  //Adiciona os jogos \u00e0 lista respectiva
   miniGames.add(tailGame);
   miniGames.add(slapGame);
   miniGames.add(drownFishGame);
   miniGames.add(hitTheVaseGame);
 
+  //Inicializa a lista de jogos dispon\u00edveis com o mesmo n\u00famero de elementos que a lista de jogos adicionados
   playableGames = new ArrayList<Integer>(miniGames.size());
 
+  //Adiciona os valores
   playableGames.add(0);
   playableGames.add(1);
   playableGames.add(2);
   playableGames.add(3);
 
-  currentScene = mainMenu;
+  currentScene = mainMenu; //define o menu de jogo com a cena inicial.
 }
 
+//Fun\u00e7\u00e3o para retornar o pr\u00f3ximo mini jogo ou cena.
+//Retorna cena pois \u00e9 o elemento base de qualquer cena: seja jogo ou apena scene.
 public Scene getNextMiniGame() {
+  //se a lista ainda tiver valores, ent\u00e3o retorna um mini jogo aleat\u00f3rio
   if(playableGames.size() > 0) {
     int randomScene = (int)random(0, playableGames.size());
 
     int sceneNumber = playableGames.get(randomScene);
 
-    playableGames.remove(randomScene);
+    playableGames.remove(randomScene); //remove o valor do mini jogo escolhido
 
     Scene scene = miniGames.get(sceneNumber);
-    scene.startScene();
+    scene.startScene(); //reinicia o jogo, pelo sim pelo n\u00e3o
 
-    return scene;
+    return scene; //retorna o jogo selecionado
   }
-  else {
+  else { //se a lista j\u00e1 estiver vazia, ent\u00e3o devolve a cena final do jogo.
     return finalScene;
   }
 }
 
+//desenha a cena atual
 public void draw() {
   currentScene.drawScene();
 }
 
+//verifica as condi\u00e7\u00f5es de mousePressed da cena atual.
 public void mousePressed() {
   currentScene.checkForPresses();
 }
 
+//verifica as condi\u00e7\u00f5es de mouseReleased da cena atual.
 public void mouseReleased() {
   currentScene.checkForReleases();
 }
 
+//verifica as condi\u00e7\u00f5es de clique da cena atual.
 public void mouseClicked() {
   currentScene.checkForClicks();
 }
 
+//verifica as condi\u00e7\u00f5es de keypressed da cena atual.
 public void keyPressed() {
 }
 //classe para a gest\u00e3o de spritesheets para a anima\u00e7\u00e3o de objectos
@@ -219,14 +240,16 @@ class Button {
 }
 //Mini jogo de beber a \u00e1gua do aqu\u00e1rio. Classe filha de GameScene.
 class DrownFishGame extends GameScene {
-  PImage playerTongueImage;
-  PImage playerNoTongueImage;
   PImage playerState;
+  PImage fundo;
   Button gameOverBtn;
 
-  PImage fishBowl; //sprites
+  AnimatedSprite fishBowl;
+  AnimatedSprite catte;
 
-  float playerSize;
+  PImage instructions;
+  PImage end;
+  PImage ohno;
 
   float keyTimerStart;
   float keyTimer;
@@ -238,26 +261,36 @@ class DrownFishGame extends GameScene {
   DrownFishGame() {
     super(); //chama o construtor do pai.
 
-    playerTongueImage = loadImage("images/drownfishgame/playerTongue.png");
-    playerNoTongueImage = loadImage("images/drownfishgame/playerNoTongue.png");
-    fishBowl = loadImage("images/drownfishgame/bowl.png");
+    fundo = loadImage("images/drownfishgame/fundo.png");
+    fishBowl = new AnimatedSprite("images/drownfishgame/bowl.png", 3, 3);
+    catte = new AnimatedSprite("images/drownfishgame/catte.png", 2, 1);
+
+    instructions = loadImage("images/drownfishgame/instructions.png");
+    end = loadImage("images/drownfishgame/end.png");
+    ohno = loadImage("images/drownfishgame/ohno.png");
 
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
-    playerState = playerNoTongueImage;
-    playerSize = 0.5f;
+    fishBowl.setAnimation(0, 0, 1, false);
+    catte.setAnimation(1, 1, 1, false);
+
+    fishBowl.position = new PVector(width/2 - 120, height/2 - 10);
+    catte.position = new PVector(width/2 - 70, height/2 -100);
+
     waterDrank = 0;
 
-    gameTime = 3f;
+    gameTime = 7f;
   }
 
   //desenha os elementos comuns a todos os estados de jogo
   public void drawScene() {
     background(255);
-    imageMode(CENTER);
-    image(playerState, width/2, height/2, playerState.width * playerSize, playerState.height * playerSize);
+    imageMode(CORNER);
+    image(fundo, 0, 0);
 
-    image(fishBowl, width/2 - 50, height/2);
+    imageMode(CENTER);
+    catte.update();
+    fishBowl.update();
 
     //chama a fun\u00e7\u00e3o de draw do pai
     super.drawScene();
@@ -287,9 +320,8 @@ class DrownFishGame extends GameScene {
 
   //override dos m\u00e9todos abstratos do pai para conter elementos espeficos do jogo
   public @Override void gameStartDraw() {
-    fill(50);
-    textSize(50);
-    text("drink all teh water", width/2, height/2);
+    imageMode(CORNER);
+    image(instructions, 0, 0);
   }
 
   public @Override void gameRunningDraw() {
@@ -304,15 +336,14 @@ class DrownFishGame extends GameScene {
     fill(0);
     rect(10, 10, width-20, 10);
 
-    fill(50);
-    text("game over binch", width/2, height/2);
+    imageMode(CORNER);
+    image(ohno, 0, 0);
     gameOverBtn.render();
   }
 
   public @Override void gameWinDraw() {
-    textSize(32);
-    fill(50);
-    text("u monster", width/2, height/2);
+    imageMode(CORNER);
+    image(end, 0, 0);
   }
 
   //verifica inputs de rato para os bot\u00f5es da cena
@@ -339,11 +370,13 @@ class DrownFishGame extends GameScene {
 
   public void checkForKeyPresses() {
     if(key == ' ' && !pressingKey) {
-      playerState = playerState == playerTongueImage ? playerNoTongueImage : playerTongueImage;
       pressingKey = true;
       keyTimerStart = millis();
 
-      waterDrank++;
+      waterDrank++; //frame da anima\u00e7\u00e3o do aqu\u00e1rio depende do valor da \u00e1gua bebida.
+      fishBowl.setAnimation((int)(waterDrank/2.6f), (int)(waterDrank/2.6f), 1, false); //divide o valor de maneira a obter a mesma frame por mais tempo
+
+      catte.setAnimation(waterDrank % 2, waterDrank % 2, 1, false); //resto da divis\u00e3o por 2 \u00e9 sempre 0 ou 1; s\u00f3 temos 2 frames
 
       if(waterDrank == 20) {
         status = GameStatus.GAME_WIN;
@@ -355,10 +388,10 @@ class DrownFishGame extends GameScene {
   }
 
   public void startScene() {
-    playerState = playerNoTongueImage;
-    playerSize = 0.5f;
     waterDrank = 0;
     pressingKey = false;
+    fishBowl.setAnimation(0, 0, 1, false);
+    catte.setAnimation(1, 1, 1, false);
 
     super.startScene();
   }
@@ -367,21 +400,19 @@ class DrownFishGame extends GameScene {
 //desenha um bot\u00e3o e apresenta imagens relativas \u00e0 cena final
 //cont\u00e9m um bot\u00e3o para voltar para o menu incial
 class FinalScene implements Scene {
+  AnimatedSprite backgroundImage;
   Button okBtn;
 
   FinalScene() {
-    okBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
+    okBtn = new Button("images/lastscene/btn.png", new PVector(width/2, height/2+160));
+
+    backgroundImage = new AnimatedSprite("images/lastscene/background.png", 1, 2);
+    backgroundImage.setAnimation(0, 1, 2, true);
+    okBtn.btnPosition = new PVector(width - okBtn.btnImage.width + 30, height - okBtn.btnImage.height);
   }
 
   public void drawScene() {
-    background(255);
-
-    //maybe put an animated gif and show the text at the end of the gif?
-
-    fill(0);
-    textSize(20);
-    textAlign(CENTER);
-    text("u have done it!!!", width/2, height/2);
+    backgroundImage.update();
 
     okBtn.render();
   }
@@ -415,27 +446,28 @@ class FinalScene implements Scene {
 //desenha um bot\u00e3o e apresenta imagens relativas \u00e0 cena incial
 //cont\u00e9m um bot\u00e3o para come\u00e7ar os jogos
 class FirstScene implements Scene{
+  AnimatedSprite backgroundImage;
+  AnimatedSprite title;
   Button okBtn;
-  //AnimatedSprite cat;
 
   FirstScene() {
-    okBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
-    /*cat = new AnimatedSprite("images/cat.png", 6, 2);
+    okBtn = new Button("images/firstscene/btn.png", new PVector(0, 0));
 
-    cat.setAnimation(0, 11, 10, true);
-    cat.spriteScale = new PVector(1, 1);
-    cat.position = new PVector(100, 20);*/
+    backgroundImage = new AnimatedSprite("images/firstscene/background.png", 1, 2);
+    title = new AnimatedSprite("images/firstscene/title.png", 1, 2);
+
+    backgroundImage.setAnimation(0, 1, 2, true);
+    title.setAnimation(0, 1, 2, true);
+
+    backgroundImage.position = new PVector(width/2 - backgroundImage.frameWidth, height - backgroundImage.frameHeight);
+    title.position = new PVector(width/2 - title.frameWidth/2, 50); //centra a imagem do titulo
+    okBtn.btnPosition = new PVector(width - okBtn.btnImage.width + 30, height - okBtn.btnImage.height);
   }
 
   public void drawScene() {
-    background(255);
-
-    //cat.update();
-
-    fill(0);
-    textSize(20);
-    textAlign(CENTER);
-    text("u are a catte and ur home alone to do as u please.\ncause some mayhem or whatever", width/2, height/2);
+    background(249, 213, 211);
+    backgroundImage.update();
+    title.update();
 
     okBtn.render();
   }
@@ -470,8 +502,6 @@ class FirstScene implements Scene{
 //O uso de uma classe abstrata deve-se ao uso de m\u00e9todos abstratos que facilitam a implementa\u00e7\u00e3o do jogo.
 abstract class GameScene implements Scene {
   //elementos comuns a todos os mini jogos
-  PImage backgroundImage;
-
   protected float gameTimer;
   protected float timerStart;
 
@@ -584,9 +614,9 @@ static class GameStatus {
 }
 //Mini jogo de atirar com o vaso para o ch\u00e3o. Classe filha de GameScene.
 class HitTheVaseGame extends GameScene {
-  PImage backgroundImage;
   Button gameOverBtn;
 
+  PImage backgroundImage;
   PImage playerImage;
   PImage catArm;
   PImage vaseImage;
@@ -594,18 +624,27 @@ class HitTheVaseGame extends GameScene {
   PVector enemyPosition;
   float enemyRotation;
 
+  PImage instructions;
+  PImage end;
+  PImage ohno;
+
   //Inicia as vari\u00e1veis do jogo. Mesmo que em todos os outros jogos.
   HitTheVaseGame() {
     super();
 
+    backgroundImage = loadImage("images/hitthevasegame/background.png");
     playerImage = loadImage("images/hitthevasegame/player.png");
     catArm = loadImage("images/hitthevasegame/paw.png");
     vaseImage = loadImage("images/hitthevasegame/vase.png");
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
+    instructions = loadImage("images/hitthevasegame/instructions.png");
+    end = loadImage("images/hitthevasegame/end.png");
+    ohno = loadImage("images/hitthevasegame/ohno.png");
+
     //inicializa a posi\u00e7\u00e3o da patinha e do vaso (enemy)
     pawPosition = new PVector();
-    enemyPosition = new PVector(width/2 - 125, height/2 + 50);
+    enemyPosition = new PVector(width/2 - 100, height/2 + 50);
     enemyRotation = 0;
 
     gameTime = 1f; //tempo de jogo
@@ -613,11 +652,12 @@ class HitTheVaseGame extends GameScene {
 
   //desenha os elementos comuns a todos os estados de jogo
   public void drawScene() {
-    background(255);
+    imageMode(CORNER);
+    image(backgroundImage, 0, 0);
 
     imageMode(CENTER);
     updatePawPosition(); //atualiza a posi\u00e7\u00e3o da pata
-    image(playerImage, width/2 + 125, height/2);
+    image(playerImage, width/2 + 75, height/2);
 
     //push e pop matrix porque s\u00e3o feitas transforma\u00e7\u00f5es no vaso
     pushMatrix();
@@ -631,8 +671,8 @@ class HitTheVaseGame extends GameScene {
 
   //faz a atualiza\u00e7\u00e3o da pata que \u00e9 controlada pela posi\u00e7\u00e3o do rato. Como o image mode \u00e9 centrado \u00e9 necess\u00e1rio fazer c\u00e1lculos para que o pivot da pata seja no canto inferior esquerdo.
   public void updatePawPosition() {
-    pawPosition.x = constrain(((catArm.width)/2) + mouseX, 350, width - 250);
-    pawPosition.y = constrain(mouseY - ((catArm.height)/2), 145, height - 150);
+    pawPosition.x = constrain(((catArm.width)/2) + mouseX, 360, 400); //limita a posi\u00e7\u00e3o
+    pawPosition.y = constrain(mouseY - ((catArm.height)/2), 200, 300);
 
     image(catArm, pawPosition.x, pawPosition.y);
   }
@@ -648,9 +688,8 @@ class HitTheVaseGame extends GameScene {
 
   //override dos m\u00e9todos abstratos do pai para conter elementos espeficos do jogo
   public @Override void gameStartDraw() {
-    fill(50);
-    textSize(50);
-    text("slap teh vase", width/2, height/2);
+    imageMode(CORNER);
+    image(instructions, 0, 0);
   }
 
   public @Override void gameRunningDraw() {
@@ -665,15 +704,14 @@ class HitTheVaseGame extends GameScene {
     fill(0);
     rect(10, 10, width-20, 10);
 
-    fill(50);
-    text("game over binch", width/2, height/2);
+    imageMode(CORNER);
+    image(ohno, 0, 0);
     gameOverBtn.render();
   }
 
   public @Override void gameWinDraw() {
-    textSize(32);
-    fill(50);
-    text("oh shit!!!!", width/2, height/2);
+    imageMode(CORNER);
+    image(end, 0, 0);
 
     //vaso roda como se tivesse ca\u00eddo
     enemyPosition = new PVector(width/2 - 100, height/2 + 150);
@@ -704,7 +742,7 @@ class HitTheVaseGame extends GameScene {
   //reinicia valores da cena
   public void startScene() {
     pawPosition = new PVector();
-    enemyPosition = new PVector(width/2 - 125, height/2 + 50);
+    enemyPosition = new PVector(width/2 - 100, height/2 + 50);
     enemyRotation = 0;
 
     super.startScene(); //chama m\u00e9todo do pai
@@ -712,7 +750,8 @@ class HitTheVaseGame extends GameScene {
 }
 //Classe para o menu inicial. Implementa a interface Scene
 class MainMenu implements Scene {
-  PImage backgroundImage;
+  AnimatedSprite backgroundImage;
+  AnimatedSprite title;
   Button newGameBtn;
   Button exitBtn;
 
@@ -721,18 +760,27 @@ class MainMenu implements Scene {
 
   //inicializa os elementos do menu
   MainMenu(){
-    backgroundImage = loadImage("images/mainmenu/mainmenu.png");
+    backgroundImage = new AnimatedSprite("images/mainmenu/mainmenu.png", 1, 2);
+    title = new AnimatedSprite("images/mainmenu/title.png", 1, 4);
 
-    newGameBtn = new Button("images/mainmenu/newgame.png", new PVector(width/2, height/2+60));
-    exitBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
+    newGameBtn = new Button("images/mainmenu/newgame.png", new PVector(width/2, height/2-40));
+    exitBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+110));
 
     buttons.add(newGameBtn);
     buttons.add(exitBtn);
+
+    //inicia anima\u00e7\u00f5es da sprite
+    backgroundImage.setAnimation(0, 1, 2, true);
+    title.setAnimation(0, 3, 2, true);
+
+    title.position = new PVector(width/2 - title.frameWidth/2, 10); //centra a imagem do titulo
   }
 
   //desenha os elementos do menu
   public void drawScene() {
-    background(backgroundImage);
+    imageMode(CENTER);
+    backgroundImage.update();
+    title.update();
 
     //renderiza os bot\u00f5es
     for(Button btn : buttons) {
@@ -766,7 +814,7 @@ class MainMenu implements Scene {
   //efectua a a\u00e7\u00e3o quando o rato est\u00e1 em cima do bot\u00e3o e \u00e9 efectuado um evento de clique
   public void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = firstScene;
+      currentScene = getNextMiniGame();
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {
@@ -803,83 +851,83 @@ class SlapCatGame extends GameScene {
   PImage backgroundImage;
   PImage catArm;
 
-  PImage otherCatImage1;
-  PImage otherCatImage2;
-  PImage enemyImage;
+  AnimatedSprite otherCat;
 
-  PVector enemyPosition;
+  PImage instructions;
+  PImage end;
+  PImage ohno;
+
   PVector pawPosition;
 
-  float playerSize;
   float enemySpeed = 7f;
 
   //Inicia as vari\u00e1veis do jogo. Mesmo que em todos os outros jogos.
   SlapCatGame() {
     super();
 
+    backgroundImage = loadImage("images/slapcatgame/background.png");
     playerImage = loadImage("images/slapcatgame/player.png");
     catArm = loadImage("images/slapcatgame/catpaw.png");
-    otherCatImage1 = loadImage("images/slapcatgame/othercat1.png");
-    otherCatImage2 = loadImage("images/slapcatgame/othercat2.png");
+    otherCat = new AnimatedSprite("images/slapcatgame/othercat.png", 1, 2);
+
+    instructions = loadImage("images/slapcatgame/instructions.png");
+    end = loadImage("images/drownfishgame/end.png");
+    ohno = loadImage("images/drownfishgame/ohno.png");
 
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
-    playerSize = 0.7f;
-
+    otherCat.setAnimation(0, 0, 1, false);
     //inicializa posi\u00e7\u00f5es dos elementos de jogo.
-    enemyPosition = new PVector(-otherCatImage1.width * playerSize, 200);
+    otherCat.position = new PVector(-otherCat.frameWidth, height-otherCat.frameHeight);
     pawPosition = new PVector();
 
-    enemyImage = otherCatImage1;
     gameTime = 2.5f; //inicia o tempo de jogo
   }
 
   //desenha os elementos comuns a todos os estados de jogo
   public void drawScene() {
-    background(255);
+    background(backgroundImage);
 
     imageMode(CENTER);
     updatePawPosition(); //atualiza a posi\u00e7\u00e3o da pata
 
-    image(playerImage, width/2+125, 200, playerImage.width * playerSize, playerImage.height * playerSize);
+    image(playerImage, width/2+125, height/2, playerImage.width, playerImage.height);
 
     imageMode(CORNER);
-    image(enemyImage, enemyPosition.x, enemyPosition.y, enemyImage.width * playerSize, enemyImage.height * playerSize);
+    otherCat.update();
 
     super.drawScene(); //chama o m\u00e9todo draw do pai
   }
 
   //faz a atualiza\u00e7\u00e3o da pata que \u00e9 controlada pela posi\u00e7\u00e3o do rato. Como o image mode \u00e9 centrado \u00e9 necess\u00e1rio fazer c\u00e1lculos para que o pivot da pata seja no canto inferior esquerdo.
   public void updatePawPosition() {
-    pawPosition.x = constrain(((catArm.width*playerSize)/2)+mouseX, 375, width - 275);
-    pawPosition.y = constrain(mouseY - ((catArm.height*playerSize)/2), 145, height - 150);
+    pawPosition.x = constrain(((catArm.width)/2)+mouseX, 400, width - 280);
+    pawPosition.y = constrain(mouseY - ((catArm.height)/2), 230, height - 170);
 
-    image(catArm, pawPosition.x, pawPosition.y, catArm.width * playerSize, catArm.height * playerSize);
+    image(catArm, pawPosition.x, pawPosition.y, catArm.width, catArm.height);
   }
 
   //verifica se houve uma colis\u00e3o da pata com o inimigo (enemy). \u00c9 verificada a sobreposi\u00e7\u00e3o de imagens para isto.
   //se houver colis\u00e3o passa para o estado game win.
   public void checkColision() {
-    if(pawPosition.x > enemyPosition.x && pawPosition.x < enemyPosition.x + (enemyImage.width * playerSize)
+    if(pawPosition.x > otherCat.position.x && pawPosition.x < otherCat.position.x + (otherCat.frameWidth)
       && pawPosition.y > 225 && pmouseX != mouseX) {
-      enemyImage = otherCatImage2;
-
+      otherCat.setAnimation(1, 1, 1, false);
       status = GameStatus.GAME_WIN;
     }
   }
 
   //override dos m\u00e9todos abstratos do pai para conter elementos espeficos do jogo
   public @Override void gameStartDraw() {
-    fill(50);
-    textSize(50);
-    text("slap teh cat", width/2, height/2);
+    imageMode(CORNER);
+    image(instructions, 0, 0);
   }
 
   public @Override void gameRunningDraw() {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-    enemyPosition.x += enemySpeed;  //move o inimigo
+    otherCat.position.x += enemySpeed;  //move o inimigo
     checkColision();  //verifica a colis\u00e3o: condi\u00e7\u00e3o de vit\u00f3ria
   }
 
@@ -887,15 +935,14 @@ class SlapCatGame extends GameScene {
     fill(0);
     rect(10, 10, width-20, 10);
 
-    fill(50);
-    text("game over binch", width/2, height/2);
+    imageMode(CORNER);
+    image(ohno, 0, 0);
     gameOverBtn.render();
   }
 
   public @Override void gameWinDraw() {
-    textSize(32);
-    fill(50);
-    text("hope ur happy with ur self", width/2, height/2);
+    imageMode(CORNER);
+    image(end, 0, 0);
   }
 
   //verifica inputs do rato para os bot\u00f5es desenhados
@@ -925,11 +972,10 @@ class SlapCatGame extends GameScene {
 
   //reinicia valores da cena
   public void startScene() {
-    playerSize = 0.7f;
-    enemyPosition = new PVector(-otherCatImage1.width * playerSize, 200);
+    otherCat.position = new PVector(-otherCat.frameWidth, height-otherCat.frameHeight);
     pawPosition = new PVector();
 
-    enemyImage = otherCatImage1;
+    otherCat.setAnimation(0, 0, 1, false);
 
     super.startScene(); //chama m\u00e9todo do pai
   }
@@ -937,9 +983,12 @@ class SlapCatGame extends GameScene {
 //Mini jogo de dar uma patada a outro gato. Classe filha de GameScene.
 class TailGame extends GameScene {
   PImage backgroundImage;
-  PImage playerImage;
-  PImage playerFinishImage;
-  PImage playerImageToDraw;
+
+  AnimatedSprite player;
+
+  PImage instructions;
+  PImage end;
+  PImage ohno;
 
   Button gameOverBtn;
 
@@ -953,39 +1002,43 @@ class TailGame extends GameScene {
   TailGame() {
     super();
 
-    playerImage = loadImage("images/tailgame/player.png");
-    playerFinishImage = loadImage("images/tailgame/playerFinish.png");
+    backgroundImage = loadImage("images/tailgame/background.png");
+    player = new AnimatedSprite("images/tailgame/player.png", 3, 1);
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
+
+    instructions = loadImage("images/tailgame/instructions.png");
+    end = loadImage("images/tailgame/end.png");
+    ohno = loadImage("images/tailgame/ohno.png");
+
     keyTimerStart = millis();
 
-    playerImageToDraw = playerImage;
+    player.setAnimation(0, 0, 10, true);
     gameTime = 7f; //tempo de jogo
+
+    player.position = new PVector(0, 0);
   }
 
   //desenha os elementos comuns a todos os estados de jogo
   public void drawScene() {
-    background(255);
+    background(backgroundImage);
 
     //push e pop matrix porque s\u00e3o feitas transforma\u00e7\u00f5es no jogador
     pushMatrix();
-    imageMode(CENTER);
-    translate(width/2f, height/2f);
+    translate(width/2, height/2);
     rotate(rotateAngle);
-    image(playerImageToDraw, 0, 0);
+    translate(-player.frameWidth/2, -player.frameHeight/2); //roda no centro; imagem move-se metade do seu tamanho para ficar centrada no ponto rodado
+    player.update();
     popMatrix();
 
     inputs(); //verifica os inputs
-
-    textAlign(CENTER);
 
     super.drawScene(); //chama m\u00e9todo do pai
   }
 
   //override dos m\u00e9todos abstratos do pai para conter elementos espeficos do jogo
   public @Override void gameStartDraw() {
-    fill(50);
-    textSize(50);
-    text("catch a tail", width/2, height/2);
+    imageMode(CORNER);
+    image(instructions, 0, 0);
   }
 
   public @Override void gameRunningDraw() {
@@ -999,19 +1052,19 @@ class TailGame extends GameScene {
     fill(0);
     rect(10, 10, width-20, 10);
 
-    fill(50);
-    text("game over binch", width/2, height/2);
+    imageMode(CORNER);
+    image(ohno, 0, 0);
     gameOverBtn.render();
   }
 
   public @Override void gameWinDraw() {
-    textSize(32);
-    fill(50);
-    text("u have caught ur tail", width/2, height/2);
+    imageMode(CORNER);
+    image(end, 0, 0);
 
-    playerImageToDraw = playerFinishImage;
+    player.setAnimation(2, 2, 1, false);
   }
 
+  //verifica os inputs
   public void inputs() {
     if(keyPressed) {
       checkForKeyPresses();
@@ -1020,6 +1073,7 @@ class TailGame extends GameScene {
       pressingKey = false;
     }
 
+    //usa a mesma logica que o drownfishgame
     //evita que o jogador apenas clique na tecla para atingir a velocidade desejada.
     //reinicia a velocidade ap\u00f3s x segundos a carregar ou quando nenhuma tecla \u00e9 pressionada.
     if(pressingKey) {
@@ -1030,14 +1084,15 @@ class TailGame extends GameScene {
       }
     }
     else {
-      speed = constrain(speed + 0.01f, -0.5f, -0.1f);
+      speed = constrain(speed + 0.01f, -0.5f, -0.1f); //limita a velocidade do gato
     }
 
     if(speed == -0.5f) {
-       status = GameStatus.GAME_WIN;
+       status = GameStatus.GAME_WIN; //se a velocidade chegar ao velor definido ent\u00e3o a condi\u00e7\u00e3o de vit\u00f3ria \u00e9 alcan\u00e7ada.
     }
   }
 
+  //verifica inputs do rato para os bot\u00f5es desenhados
   public void checkForPresses() {
     if(gameOverBtn.isMouseOnBtn()) {
       gameOverBtn.pressed();
@@ -1048,15 +1103,17 @@ class TailGame extends GameScene {
     gameOverBtn.released();
   }
 
+  //na a\u00e7\u00e3o de clique do bot\u00e3o, passa para o menu inicial
   public void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
       startScene();
 
       mainMenu.startScene();
-      currentScene = mainMenu;
+      currentScene = mainMenu; //atualiza a cena atual
     }
   }
 
+  //verifica as teclas que s\u00e3o premidas
   public void checkForKeyPresses() {
     if(status == GameStatus.GAME_RUNNING) {
       if(key == ' ' && !pressingKey) {
@@ -1070,14 +1127,17 @@ class TailGame extends GameScene {
     }
   }
 
+  //reinicia os valores da cena
   public void startScene() {
     keyTimerStart = millis();
     timerStart = millis();
-    playerImageToDraw = playerImage;
     rotateAngle = -1f;
     speed = -0.1f;
 
-    super.startScene();
+    player.setAnimation(0, 0, 10, true);
+    player.position = new PVector(0, 0);
+
+    super.startScene(); //chama o m\u00e9todo do pai
   }
 }
   public void settings() {  size(720, 480); }

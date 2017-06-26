@@ -1,6 +1,7 @@
 //Classe para o menu inicial. Implementa a interface Scene
 class MainMenu implements Scene {
-  PImage backgroundImage;
+  AnimatedSprite backgroundImage;
+  AnimatedSprite title;
   Button newGameBtn;
   Button exitBtn;
 
@@ -9,18 +10,27 @@ class MainMenu implements Scene {
 
   //inicializa os elementos do menu
   MainMenu(){
-    backgroundImage = loadImage("images/mainmenu/mainmenu.png");
+    backgroundImage = new AnimatedSprite("images/mainmenu/mainmenu.png", 1, 2);
+    title = new AnimatedSprite("images/mainmenu/title.png", 1, 4);
 
-    newGameBtn = new Button("images/mainmenu/newgame.png", new PVector(width/2, height/2+60));
-    exitBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
+    newGameBtn = new Button("images/mainmenu/newgame.png", new PVector(width/2, height/2-40));
+    exitBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+110));
 
     buttons.add(newGameBtn);
     buttons.add(exitBtn);
+
+    //inicia animações da sprite
+    backgroundImage.setAnimation(0, 1, 2, true);
+    title.setAnimation(0, 3, 2, true);
+
+    title.position = new PVector(width/2 - title.frameWidth/2, 10); //centra a imagem do titulo
   }
 
   //desenha os elementos do menu
   void drawScene() {
-    background(backgroundImage);
+    imageMode(CENTER);
+    backgroundImage.update();
+    title.update();
 
     //renderiza os botões
     for(Button btn : buttons) {
@@ -54,7 +64,7 @@ class MainMenu implements Scene {
   //efectua a ação quando o rato está em cima do botão e é efectuado um evento de clique
   void checkForClicks() {
     if(newGameBtn.isMouseOnBtn()) {
-      currentScene = firstScene;
+      currentScene = getNextMiniGame();
       cursor(ARROW);
     }
     else if(exitBtn.isMouseOnBtn()) {

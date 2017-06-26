@@ -2,21 +2,19 @@
 //desenha um botão e apresenta imagens relativas à cena final
 //contém um botão para voltar para o menu incial
 class FinalScene implements Scene {
+  AnimatedSprite backgroundImage;
   Button okBtn;
 
   FinalScene() {
-    okBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+160));
+    okBtn = new Button("images/lastscene/btn.png", new PVector(width/2, height/2+160));
+
+    backgroundImage = new AnimatedSprite("images/lastscene/background.png", 1, 2);
+    backgroundImage.setAnimation(0, 0, 2, true);
+    okBtn.btnPosition = new PVector(width - okBtn.btnImage.width + 30, height - okBtn.btnImage.height);
   }
 
   void drawScene() {
-    background(255);
-
-    //maybe put an animated gif and show the text at the end of the gif?
-
-    fill(0);
-    textSize(20);
-    textAlign(CENTER);
-    text("u have done it!!!", width/2, height/2);
+    backgroundImage.update();
 
     okBtn.render();
   }

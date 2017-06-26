@@ -5,83 +5,83 @@ class SlapCatGame extends GameScene {
   PImage backgroundImage;
   PImage catArm;
 
-  PImage otherCatImage1;
-  PImage otherCatImage2;
-  PImage enemyImage;
+  AnimatedSprite otherCat;
 
-  PVector enemyPosition;
+  PImage instructions;
+  PImage end;
+  PImage ohno;
+
   PVector pawPosition;
 
-  float playerSize;
   float enemySpeed = 7f;
 
   //Inicia as variáveis do jogo. Mesmo que em todos os outros jogos.
   SlapCatGame() {
     super();
 
+    backgroundImage = loadImage("images/slapcatgame/background.png");
     playerImage = loadImage("images/slapcatgame/player.png");
     catArm = loadImage("images/slapcatgame/catpaw.png");
-    otherCatImage1 = loadImage("images/slapcatgame/othercat1.png");
-    otherCatImage2 = loadImage("images/slapcatgame/othercat2.png");
+    otherCat = new AnimatedSprite("images/slapcatgame/othercat.png", 1, 2);
+
+    instructions = loadImage("images/slapcatgame/instructions.png");
+    end = loadImage("images/drownfishgame/end.png");
+    ohno = loadImage("images/drownfishgame/ohno.png");
 
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
-    playerSize = 0.7f;
-
+    otherCat.setAnimation(0, 0, 1, false);
     //inicializa posições dos elementos de jogo.
-    enemyPosition = new PVector(-otherCatImage1.width * playerSize, 200);
+    otherCat.position = new PVector(-otherCat.frameWidth, height-otherCat.frameHeight);
     pawPosition = new PVector();
 
-    enemyImage = otherCatImage1;
     gameTime = 2.5f; //inicia o tempo de jogo
   }
 
   //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
-    background(255);
+    background(backgroundImage);
 
     imageMode(CENTER);
     updatePawPosition(); //atualiza a posição da pata
 
-    image(playerImage, width/2+125, 200, playerImage.width * playerSize, playerImage.height * playerSize);
+    image(playerImage, width/2+125, height/2, playerImage.width, playerImage.height);
 
     imageMode(CORNER);
-    image(enemyImage, enemyPosition.x, enemyPosition.y, enemyImage.width * playerSize, enemyImage.height * playerSize);
+    otherCat.update();
 
     super.drawScene(); //chama o método draw do pai
   }
 
   //faz a atualização da pata que é controlada pela posição do rato. Como o image mode é centrado é necessário fazer cálculos para que o pivot da pata seja no canto inferior esquerdo.
   void updatePawPosition() {
-    pawPosition.x = constrain(((catArm.width*playerSize)/2)+mouseX, 375, width - 275);
-    pawPosition.y = constrain(mouseY - ((catArm.height*playerSize)/2), 145, height - 150);
+    pawPosition.x = constrain(((catArm.width)/2)+mouseX, 400, width - 280);
+    pawPosition.y = constrain(mouseY - ((catArm.height)/2), 230, height - 170);
 
-    image(catArm, pawPosition.x, pawPosition.y, catArm.width * playerSize, catArm.height * playerSize);
+    image(catArm, pawPosition.x, pawPosition.y, catArm.width, catArm.height);
   }
 
   //verifica se houve uma colisão da pata com o inimigo (enemy). É verificada a sobreposição de imagens para isto.
   //se houver colisão passa para o estado game win.
   void checkColision() {
-    if(pawPosition.x > enemyPosition.x && pawPosition.x < enemyPosition.x + (enemyImage.width * playerSize)
+    if(pawPosition.x > otherCat.position.x && pawPosition.x < otherCat.position.x + (otherCat.frameWidth)
       && pawPosition.y > 225 && pmouseX != mouseX) {
-      enemyImage = otherCatImage2;
-
+      otherCat.setAnimation(1, 1, 1, false);
       status = GameStatus.GAME_WIN;
     }
   }
 
   //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
-    fill(50);
-    textSize(50);
-    text("slap teh cat", width/2, height/2);
+    imageMode(CORNER);
+    image(instructions, 0, 0);
   }
 
   @Override void gameRunningDraw() {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-    enemyPosition.x += enemySpeed;  //move o inimigo
+    otherCat.position.x += enemySpeed;  //move o inimigo
     checkColision();  //verifica a colisão: condição de vitória
   }
 
@@ -89,15 +89,14 @@ class SlapCatGame extends GameScene {
     fill(0);
     rect(10, 10, width-20, 10);
 
-    fill(50);
-    text("game over binch", width/2, height/2);
+    imageMode(CORNER);
+    image(ohno, 0, 0);
     gameOverBtn.render();
   }
 
   @Override void gameWinDraw() {
-    textSize(32);
-    fill(50);
-    text("hope ur happy with ur self", width/2, height/2);
+    imageMode(CORNER);
+    image(end, 0, 0);
   }
 
   //verifica inputs do rato para os botões desenhados
@@ -127,11 +126,10 @@ class SlapCatGame extends GameScene {
 
   //reinicia valores da cena
   void startScene() {
-    playerSize = 0.7f;
-    enemyPosition = new PVector(-otherCatImage1.width * playerSize, 200);
+    otherCat.position = new PVector(-otherCat.frameWidth, height-otherCat.frameHeight);
     pawPosition = new PVector();
 
-    enemyImage = otherCatImage1;
+    otherCat.setAnimation(0, 0, 1, false);
 
     super.startScene(); //chama método do pai
   }

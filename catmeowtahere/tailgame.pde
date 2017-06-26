@@ -1,9 +1,12 @@
 //Mini jogo de dar uma patada a outro gato. Classe filha de GameScene.
 class TailGame extends GameScene {
   PImage backgroundImage;
-  PImage playerImage;
-  PImage playerFinishImage;
-  PImage playerImageToDraw;
+
+  AnimatedSprite player;
+
+  PImage instructions;
+  PImage end;
+  PImage ohno;
 
   Button gameOverBtn;
 
@@ -17,39 +20,43 @@ class TailGame extends GameScene {
   TailGame() {
     super();
 
-    playerImage = loadImage("images/tailgame/player.png");
-    playerFinishImage = loadImage("images/tailgame/playerFinish.png");
+    backgroundImage = loadImage("images/tailgame/background.png");
+    player = new AnimatedSprite("images/tailgame/player.png", 3, 1);
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
+
+    instructions = loadImage("images/tailgame/instructions.png");
+    end = loadImage("images/tailgame/end.png");
+    ohno = loadImage("images/tailgame/ohno.png");
+
     keyTimerStart = millis();
 
-    playerImageToDraw = playerImage;
+    player.setAnimation(0, 0, 10, true);
     gameTime = 7f; //tempo de jogo
+
+    player.position = new PVector(0, 0);
   }
 
   //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
-    background(255);
+    background(backgroundImage);
 
     //push e pop matrix porque são feitas transformações no jogador
     pushMatrix();
-    imageMode(CENTER);
-    translate(width/2f, height/2f);
+    translate(width/2, height/2);
     rotate(rotateAngle);
-    image(playerImageToDraw, 0, 0);
+    translate(-player.frameWidth/2, -player.frameHeight/2); //roda no centro; imagem move-se metade do seu tamanho para ficar centrada no ponto rodado
+    player.update();
     popMatrix();
 
     inputs(); //verifica os inputs
-
-    textAlign(CENTER);
 
     super.drawScene(); //chama método do pai
   }
 
   //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
-    fill(50);
-    textSize(50);
-    text("catch a tail", width/2, height/2);
+    imageMode(CORNER);
+    image(instructions, 0, 0);
   }
 
   @Override void gameRunningDraw() {
@@ -63,17 +70,16 @@ class TailGame extends GameScene {
     fill(0);
     rect(10, 10, width-20, 10);
 
-    fill(50);
-    text("game over binch", width/2, height/2);
+    imageMode(CORNER);
+    image(ohno, 0, 0);
     gameOverBtn.render();
   }
 
   @Override void gameWinDraw() {
-    textSize(32);
-    fill(50);
-    text("u have caught ur tail", width/2, height/2);
+    imageMode(CORNER);
+    image(end, 0, 0);
 
-    playerImageToDraw = playerFinishImage;
+    player.setAnimation(2, 2, 1, false);
   }
 
   //verifica os inputs
@@ -143,9 +149,11 @@ class TailGame extends GameScene {
   void startScene() {
     keyTimerStart = millis();
     timerStart = millis();
-    playerImageToDraw = playerImage;
     rotateAngle = -1f;
     speed = -0.1f;
+
+    player.setAnimation(0, 0, 10, true);
+    player.position = new PVector(0, 0);
 
     super.startScene(); //chama o método do pai
   }

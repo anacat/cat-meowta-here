@@ -1,13 +1,15 @@
 //Mini jogo de beber a água do aquário. Classe filha de GameScene.
 class DrownFishGame extends GameScene {
-  PImage playerTongueImage;
-  PImage playerNoTongueImage;
   PImage playerState;
+  PImage fundo;
   Button gameOverBtn;
 
-  PImage fishBowl; //sprites
+  AnimatedSprite fishBowl;
+  AnimatedSprite catte;
 
-  float playerSize;
+  PImage instructions;
+  PImage end;
+  PImage ohno;
 
   float keyTimerStart;
   float keyTimer;
@@ -19,26 +21,36 @@ class DrownFishGame extends GameScene {
   DrownFishGame() {
     super(); //chama o construtor do pai.
 
-    playerTongueImage = loadImage("images/drownfishgame/playerTongue.png");
-    playerNoTongueImage = loadImage("images/drownfishgame/playerNoTongue.png");
-    fishBowl = loadImage("images/drownfishgame/bowl.png");
+    fundo = loadImage("images/drownfishgame/fundo.png");
+    fishBowl = new AnimatedSprite("images/drownfishgame/bowl.png", 3, 3);
+    catte = new AnimatedSprite("images/drownfishgame/catte.png", 2, 1);
+
+    instructions = loadImage("images/drownfishgame/instructions.png");
+    end = loadImage("images/drownfishgame/end.png");
+    ohno = loadImage("images/drownfishgame/ohno.png");
 
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
-    playerState = playerNoTongueImage;
-    playerSize = 0.5f;
+    fishBowl.setAnimation(0, 0, 1, false);
+    catte.setAnimation(1, 1, 1, false);
+
+    fishBowl.position = new PVector(width/2 - 120, height/2 - 10);
+    catte.position = new PVector(width/2 - 70, height/2 -100);
+
     waterDrank = 0;
 
-    gameTime = 3f;
+    gameTime = 7f;
   }
 
   //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
     background(255);
-    imageMode(CENTER);
-    image(playerState, width/2, height/2, playerState.width * playerSize, playerState.height * playerSize);
+    imageMode(CORNER);
+    image(fundo, 0, 0);
 
-    image(fishBowl, width/2 - 50, height/2);
+    imageMode(CENTER);
+    catte.update();
+    fishBowl.update();
 
     //chama a função de draw do pai
     super.drawScene();
@@ -68,9 +80,8 @@ class DrownFishGame extends GameScene {
 
   //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
-    fill(50);
-    textSize(50);
-    text("drink all teh water", width/2, height/2);
+    imageMode(CORNER);
+    image(instructions, 0, 0);
   }
 
   @Override void gameRunningDraw() {
@@ -85,15 +96,14 @@ class DrownFishGame extends GameScene {
     fill(0);
     rect(10, 10, width-20, 10);
 
-    fill(50);
-    text("game over binch", width/2, height/2);
+    imageMode(CORNER);
+    image(ohno, 0, 0);
     gameOverBtn.render();
   }
 
   @Override void gameWinDraw() {
-    textSize(32);
-    fill(50);
-    text("u monster", width/2, height/2);
+    imageMode(CORNER);
+    image(end, 0, 0);
   }
 
   //verifica inputs de rato para os botões da cena
@@ -120,11 +130,13 @@ class DrownFishGame extends GameScene {
 
   void checkForKeyPresses() {
     if(key == ' ' && !pressingKey) {
-      playerState = playerState == playerTongueImage ? playerNoTongueImage : playerTongueImage;
       pressingKey = true;
       keyTimerStart = millis();
 
-      waterDrank++;
+      waterDrank++; //frame da animação do aquário depende do valor da água bebida.
+      fishBowl.setAnimation((int)(waterDrank/2.6), (int)(waterDrank/2.6), 1, false); //divide o valor de maneira a obter a mesma frame por mais tempo
+
+      catte.setAnimation(waterDrank % 2, waterDrank % 2, 1, false); //resto da divisão por 2 é sempre 0 ou 1; só temos 2 frames
 
       if(waterDrank == 20) {
         status = GameStatus.GAME_WIN;
@@ -136,10 +148,10 @@ class DrownFishGame extends GameScene {
   }
 
   void startScene() {
-    playerState = playerNoTongueImage;
-    playerSize = 0.5f;
     waterDrank = 0;
     pressingKey = false;
+    fishBowl.setAnimation(0, 0, 1, false);
+    catte.setAnimation(1, 1, 1, false);
 
     super.startScene();
   }
