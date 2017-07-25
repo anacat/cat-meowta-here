@@ -1,4 +1,3 @@
-//Mini jogo de beber a água do aquário. Classe filha de GameScene.
 class DrownFishGame extends GameScene {
   PImage playerState;
   PImage fundo;
@@ -17,9 +16,8 @@ class DrownFishGame extends GameScene {
 
   int waterDrank;
 
-  //inicia os elementos do jogo
   DrownFishGame() {
-    super(); //chama o construtor do pai.
+    super();
 
     fundo = loadImage("images/drownfishgame/fundo.png");
     fishBowl = new AnimatedSprite("images/drownfishgame/bowl.png", 3, 3);
@@ -42,7 +40,6 @@ class DrownFishGame extends GameScene {
     gameTime = 7f;
   }
 
-  //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
     background(255);
     imageMode(CORNER);
@@ -52,15 +49,10 @@ class DrownFishGame extends GameScene {
     catte.update();
     fishBowl.update();
 
-    //chama a função de draw do pai
     super.drawScene();
   }
 
-  //update da lógica de jogo
   void update() {
-    //update fishbowl sprites
-
-    //verifica inputs de teclas
     if(keyPressed) {
       checkForKeyPresses();
     }
@@ -68,7 +60,6 @@ class DrownFishGame extends GameScene {
       pressingKey = false;
     }
 
-    //temporizador que impede que o utilizador possa estar a carregar sem largar a tecla. Se estiver a carregar passados mais de x segundos então o pressed key passa a false, impedindo assim um jogo facilitado.
     if(pressingKey) {
       keyTimer = millis() - keyTimerStart;
 
@@ -78,7 +69,6 @@ class DrownFishGame extends GameScene {
     }
   }
 
-  //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
     imageMode(CORNER);
     image(instructions, 0, 0);
@@ -88,7 +78,6 @@ class DrownFishGame extends GameScene {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-    //chama update da lógica de jogo
     update();
   }
 
@@ -106,7 +95,6 @@ class DrownFishGame extends GameScene {
     image(end, 0, 0);
   }
 
-  //verifica inputs de rato para os botões da cena
   void checkForPresses() {
     if(gameOverBtn.isMouseOnBtn()) {
       gameOverBtn.pressed();
@@ -117,8 +105,6 @@ class DrownFishGame extends GameScene {
     gameOverBtn.released();
   }
 
-  //a ação do botão só acontece quando há uma ação de clique
-  //se estiver em game over volta para o menu inicial
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
       startScene();
@@ -133,10 +119,10 @@ class DrownFishGame extends GameScene {
       pressingKey = true;
       keyTimerStart = millis();
 
-      waterDrank++; //frame da animação do aquário depende do valor da água bebida.
-      fishBowl.setAnimation((int)(waterDrank/2.6), (int)(waterDrank/2.6), 1, false); //divide o valor de maneira a obter a mesma frame por mais tempo
-
-      catte.setAnimation(waterDrank % 2, waterDrank % 2, 1, false); //resto da divisão por 2 é sempre 0 ou 1; só temos 2 frames
+      waterDrank++;
+      fishBowl.setAnimation((int)(waterDrank/2.6), (int)(waterDrank/2.6), 1, false);
+            
+      catte.setAnimation(waterDrank % 2, waterDrank % 2, 1, false);
 
       if(waterDrank == 20) {
         status = GameStatus.GAME_WIN;

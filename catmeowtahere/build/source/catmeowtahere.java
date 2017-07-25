@@ -37,6 +37,7 @@ ArrayList<Integer> playableGames;
 
 public void setup() {
   
+  frame.setTitle("Cat Meowta Here");
   //define o tipo de render da aplica\u00e7\u00e3o (para poder "limpar" o ecr\u00e3 ao usar uma imagem como fundo de uma cena).
   createGraphics(width, height, JAVA2D);
   textFont(loadFont("MicrosoftYaHeiLight-48.vlw")); //fonte usada pela aplica\u00e7\u00e7\u00e3o
@@ -407,7 +408,7 @@ class FinalScene implements Scene {
     okBtn = new Button("images/lastscene/btn.png", new PVector(width/2, height/2+160));
 
     backgroundImage = new AnimatedSprite("images/lastscene/background.png", 1, 2);
-    backgroundImage.setAnimation(0, 1, 2, true);
+    backgroundImage.setAnimation(0, 0, 2, true);
     okBtn.btnPosition = new PVector(width - okBtn.btnImage.width + 30, height - okBtn.btnImage.height);
   }
 

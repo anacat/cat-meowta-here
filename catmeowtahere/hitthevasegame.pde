@@ -1,4 +1,3 @@
-//Mini jogo de atirar com o vaso para o chão. Classe filha de GameScene.
 class HitTheVaseGame extends GameScene {
   Button gameOverBtn;
 
@@ -14,7 +13,6 @@ class HitTheVaseGame extends GameScene {
   PImage end;
   PImage ohno;
 
-  //Inicia as variáveis do jogo. Mesmo que em todos os outros jogos.
   HitTheVaseGame() {
     super();
 
@@ -28,43 +26,37 @@ class HitTheVaseGame extends GameScene {
     end = loadImage("images/hitthevasegame/end.png");
     ohno = loadImage("images/hitthevasegame/ohno.png");
 
-    //inicializa a posição da patinha e do vaso (enemy)
     pawPosition = new PVector();
     enemyPosition = new PVector(width/2 - 100, height/2 + 50);
     enemyRotation = 0;
 
-    gameTime = 1f; //tempo de jogo
+    gameTime = 1f;
   }
 
-  //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
     imageMode(CORNER);
     image(backgroundImage, 0, 0);
 
     imageMode(CENTER);
-    updatePawPosition(); //atualiza a posição da pata
+    updatePawPosition();
     image(playerImage, width/2 + 75, height/2);
 
-    //push e pop matrix porque são feitas transformações no vaso
     pushMatrix();
     translate(enemyPosition.x, enemyPosition.y);
     rotate(enemyRotation);
     image(vaseImage, 0, 0);
     popMatrix();
 
-    super.drawScene(); //chama o método draw do pai
+    super.drawScene();
   }
 
-  //faz a atualização da pata que é controlada pela posição do rato. Como o image mode é centrado é necessário fazer cálculos para que o pivot da pata seja no canto inferior esquerdo.
   void updatePawPosition() {
-    pawPosition.x = constrain(((catArm.width)/2) + mouseX, 360, 400); //limita a posição
+    pawPosition.x = constrain(((catArm.width)/2) + mouseX, 360, 400);
     pawPosition.y = constrain(mouseY - ((catArm.height)/2), 200, 300);
 
     image(catArm, pawPosition.x, pawPosition.y);
   }
 
-  //verifica se houve uma colisão da pata com o vaso (enemy). É verificada a sobreposição de imagens para isto.
-  //se houver colisão passa para o estado game win.
   void checkColision() {
     if(pawPosition.x > enemyPosition.x && pawPosition.x < enemyPosition.x + (vaseImage.width)
       && pawPosition.y > 225 && pmouseX != mouseX) {
@@ -72,7 +64,6 @@ class HitTheVaseGame extends GameScene {
     }
   }
 
-  //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
     imageMode(CORNER);
     image(instructions, 0, 0);
@@ -82,7 +73,6 @@ class HitTheVaseGame extends GameScene {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-    //verifica a colisão: condição de vitória
     checkColision();
   }
 
@@ -99,12 +89,10 @@ class HitTheVaseGame extends GameScene {
     imageMode(CORNER);
     image(end, 0, 0);
 
-    //vaso roda como se tivesse caído
     enemyPosition = new PVector(width/2 - 100, height/2 + 150);
     enemyRotation = -HALF_PI;
   }
 
-  //verifica inputs do rato para os botões desenhados
   void checkForPresses() {
     if(gameOverBtn.isMouseOnBtn()) {
       gameOverBtn.pressed();
@@ -115,7 +103,6 @@ class HitTheVaseGame extends GameScene {
     gameOverBtn.released();
   }
 
-  //na ação de clique passa para o menu inicial
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
       startScene();
@@ -125,12 +112,11 @@ class HitTheVaseGame extends GameScene {
     }
   }
 
-  //reinicia valores da cena
   void startScene() {
     pawPosition = new PVector();
     enemyPosition = new PVector(width/2 - 100, height/2 + 50);
     enemyRotation = 0;
 
-    super.startScene(); //chama método do pai
+    super.startScene();
   }
 }

@@ -1,4 +1,3 @@
-//Mini jogo de dar uma patada a outro gato. Classe filha de GameScene.
 class TailGame extends GameScene {
   PImage backgroundImage;
 
@@ -16,7 +15,6 @@ class TailGame extends GameScene {
   float keyTimer;
   boolean pressingKey = false;
 
-  //Inicia as variáveis do jogo. Mesmo que em todos os outros jogos.
   TailGame() {
     super();
 
@@ -31,29 +29,26 @@ class TailGame extends GameScene {
     keyTimerStart = millis();
 
     player.setAnimation(0, 0, 10, true);
-    gameTime = 7f; //tempo de jogo
+    gameTime = 7f;
 
     player.position = new PVector(0, 0);
   }
 
-  //desenha os elementos comuns a todos os estados de jogo
   void drawScene() {
     background(backgroundImage);
 
-    //push e pop matrix porque são feitas transformações no jogador
     pushMatrix();
     translate(width/2, height/2);
     rotate(rotateAngle);
-    translate(-player.frameWidth/2, -player.frameHeight/2); //roda no centro; imagem move-se metade do seu tamanho para ficar centrada no ponto rodado
+    translate(-player.frameWidth/2, -player.frameHeight/2);
     player.update();
     popMatrix();
 
-    inputs(); //verifica os inputs
+    inputs();
 
-    super.drawScene(); //chama método do pai
+    super.drawScene();
   }
 
-  //override dos métodos abstratos do pai para conter elementos espeficos do jogo
   @Override void gameStartDraw() {
     imageMode(CORNER);
     image(instructions, 0, 0);
@@ -63,7 +58,7 @@ class TailGame extends GameScene {
     fill(0);
     rect(10, 10, ((width-20)/gameTime) * (gameTimer/1000), 10);
 
-    rotateAngle += speed; //gato vai rodando ao longo do tempo
+    rotateAngle += speed;
   }
 
   @Override void gameOverDraw() {
@@ -82,7 +77,6 @@ class TailGame extends GameScene {
     player.setAnimation(2, 2, 1, false);
   }
 
-  //verifica os inputs
   void inputs() {
     if(keyPressed) {
       checkForKeyPresses();
@@ -91,26 +85,22 @@ class TailGame extends GameScene {
       pressingKey = false;
     }
 
-    //usa a mesma logica que o drownfishgame
-    //evita que o jogador apenas clique na tecla para atingir a velocidade desejada.
-    //reinicia a velocidade após x segundos a carregar ou quando nenhuma tecla é pressionada.
     if(pressingKey) {
-      keyTimer = millis() - keyTimerStart; //conta o tempo passado desde que a tecla espaço foi premida.
+      keyTimer = millis() - keyTimerStart;
 
       if((keyTimer/1000) > 0.5f && speed < -0.1f) {
         speed = constrain(speed + 0.1f, -1f, -0.1f);
       }
     }
     else {
-      speed = constrain(speed + 0.01f, -0.5f, -0.1f); //limita a velocidade do gato
+      speed = constrain(speed + 0.01f, -0.5f, -0.1f);
     }
 
     if(speed == -0.5f) {
-       status = GameStatus.GAME_WIN; //se a velocidade chegar ao velor definido então a condição de vitória é alcançada.
+       status = GameStatus.GAME_WIN;
     }
   }
 
-  //verifica inputs do rato para os botões desenhados
   void checkForPresses() {
     if(gameOverBtn.isMouseOnBtn()) {
       gameOverBtn.pressed();
@@ -121,22 +111,20 @@ class TailGame extends GameScene {
     gameOverBtn.released();
   }
 
-  //na ação de clique do botão, passa para o menu inicial
   void checkForClicks() {
     if(status == GameStatus.GAME_OVER && gameOverBtn.isMouseOnBtn()) {
       startScene();
 
       mainMenu.startScene();
-      currentScene = mainMenu; //atualiza a cena atual
+      currentScene = mainMenu;
     }
   }
 
-  //verifica as teclas que são premidas
   void checkForKeyPresses() {
     if(status == GameStatus.GAME_RUNNING) {
       if(key == ' ' && !pressingKey) {
         pressingKey = true;
-        keyTimerStart = millis(); //reinicia o contador
+        keyTimerStart = millis();
         speed = constrain(speed - 0.05f, -0.5f, -0.1f);
       }
       else if(key != ' '){
@@ -145,7 +133,6 @@ class TailGame extends GameScene {
     }
   }
 
-  //reinicia os valores da cena
   void startScene() {
     keyTimerStart = millis();
     timerStart = millis();
@@ -155,6 +142,6 @@ class TailGame extends GameScene {
     player.setAnimation(0, 0, 10, true);
     player.position = new PVector(0, 0);
 
-    super.startScene(); //chama o método do pai
+    super.startScene();
   }
 }
