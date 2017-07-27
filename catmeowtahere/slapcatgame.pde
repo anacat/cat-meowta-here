@@ -6,9 +6,9 @@ class SlapCatGame extends GameScene {
 
   AnimatedSprite otherCat;
 
-  PImage instructions;
-  PImage end;
-  PImage ohno;
+  AnimatedSprite instructions;
+  AnimatedSprite end;
+  AnimatedSprite ohno;
 
   PVector pawPosition;
 
@@ -22,15 +22,23 @@ class SlapCatGame extends GameScene {
     catArm = loadImage("images/slapcatgame/catpaw.png");
     otherCat = new AnimatedSprite("images/slapcatgame/othercat.png", 1, 2);
 
-    instructions = loadImage("images/slapcatgame/instructions.png");
-    end = loadImage("images/drownfishgame/end.png");
-    ohno = loadImage("images/drownfishgame/ohno.png");
+    instructions = new AnimatedSprite("images/slapcatgame/instructions.png", 1, 2);
+    end = new AnimatedSprite("images/slapcatgame/end.png", 1, 2);
+    ohno = new AnimatedSprite("images/slapcatgame/ohno.png", 1, 2);
 
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
     otherCat.setAnimation(0, 0, 1, false);
     otherCat.position = new PVector(-otherCat.frameWidth, height-otherCat.frameHeight);
     pawPosition = new PVector();
+
+    instructions.setAnimation(0, 1, 2, true);
+    end.setAnimation(0, 1, 2, true);
+    ohno.setAnimation(0, 1, 2, true);
+
+    instructions.position = new PVector(10, 10);
+    end.position = new PVector(width/2 - end.frameWidth/2, height/2 - end.frameHeight/2);
+    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2);
 
     gameTime = 2.5f;
   }
@@ -66,7 +74,7 @@ class SlapCatGame extends GameScene {
 
   @Override void gameStartDraw() {
     imageMode(CORNER);
-    image(instructions, 0, 0);
+    instructions.update();
   }
 
   @Override void gameRunningDraw() {
@@ -82,13 +90,13 @@ class SlapCatGame extends GameScene {
     rect(10, 10, width-20, 10);
 
     imageMode(CORNER);
-    image(ohno, 0, 0);
+    ohno.update();
     gameOverBtn.render();
   }
 
   @Override void gameWinDraw() {
     imageMode(CORNER);
-    image(end, 0, 0);
+    end.update();
   }
 
   void checkForPresses() {

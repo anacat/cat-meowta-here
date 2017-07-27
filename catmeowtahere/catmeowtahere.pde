@@ -14,7 +14,7 @@ ArrayList<Integer> playableGames;
 
 void setup() {
   size(720, 480);
-  frame.setTitle("Cat Meowta Here");
+  surface.setTitle("Cat Meowta Here");
   createGraphics(width, height, JAVA2D);
   textFont(loadFont("MicrosoftYaHeiLight-48.vlw"));
 

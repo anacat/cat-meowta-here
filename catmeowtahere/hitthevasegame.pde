@@ -9,9 +9,9 @@ class HitTheVaseGame extends GameScene {
   PVector enemyPosition;
   float enemyRotation;
 
-  PImage instructions;
-  PImage end;
-  PImage ohno;
+  AnimatedSprite instructions;
+  AnimatedSprite end;
+  AnimatedSprite ohno;
 
   HitTheVaseGame() {
     super();
@@ -22,13 +22,21 @@ class HitTheVaseGame extends GameScene {
     vaseImage = loadImage("images/hitthevasegame/vase.png");
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
-    instructions = loadImage("images/hitthevasegame/instructions.png");
-    end = loadImage("images/hitthevasegame/end.png");
-    ohno = loadImage("images/hitthevasegame/ohno.png");
+    instructions = new AnimatedSprite("images/hitthevasegame/instructions.png", 1, 2);
+    end = new AnimatedSprite("images/hitthevasegame/end.png", 1, 2);
+    ohno = new AnimatedSprite("images/hitthevasegame/ohno.png", 1, 2);
 
     pawPosition = new PVector();
     enemyPosition = new PVector(width/2 - 100, height/2 + 50);
     enemyRotation = 0;
+
+    instructions.setAnimation(0, 1, 2, true);
+    end.setAnimation(0, 1, 2, true);
+    ohno.setAnimation(0, 1, 2, true);
+
+    instructions.position = new PVector(width/2 - instructions.frameWidth/2, height/2 - instructions.frameHeight/2);
+    end.position = new PVector(width/2 - end.frameWidth/2, height/2 - end.frameHeight/2);
+    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2);
 
     gameTime = 1f;
   }
@@ -51,8 +59,8 @@ class HitTheVaseGame extends GameScene {
   }
 
   void updatePawPosition() {
-    pawPosition.x = constrain(((catArm.width)/2) + mouseX, 360, 400);
-    pawPosition.y = constrain(mouseY - ((catArm.height)/2), 200, 300);
+    pawPosition.x = constrain(((catArm.width)/2) + mouseX, 360, 390);
+    pawPosition.y = constrain(mouseY - ((catArm.height)/2), 230, 300);
 
     image(catArm, pawPosition.x, pawPosition.y);
   }
@@ -66,7 +74,7 @@ class HitTheVaseGame extends GameScene {
 
   @Override void gameStartDraw() {
     imageMode(CORNER);
-    image(instructions, 0, 0);
+    instructions.update();
   }
 
   @Override void gameRunningDraw() {
@@ -81,13 +89,13 @@ class HitTheVaseGame extends GameScene {
     rect(10, 10, width-20, 10);
 
     imageMode(CORNER);
-    image(ohno, 0, 0);
+    ohno.update();
     gameOverBtn.render();
   }
 
   @Override void gameWinDraw() {
     imageMode(CORNER);
-    image(end, 0, 0);
+    end.update();
 
     enemyPosition = new PVector(width/2 - 100, height/2 + 150);
     enemyRotation = -HALF_PI;

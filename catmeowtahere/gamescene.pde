@@ -74,6 +74,7 @@ abstract class GameScene implements Scene {
     }
   }
 
+  abstract void gameStartDraw();
   abstract void gameRunningDraw();
   abstract void gameOverDraw();
   abstract void gameWinDraw();

@@ -1,6 +1,5 @@
 class MainMenu implements Scene {
   AnimatedSprite backgroundImage;
-  AnimatedSprite title;
   Button newGameBtn;
   Button exitBtn;
 
@@ -8,7 +7,6 @@ class MainMenu implements Scene {
 
   MainMenu(){
     backgroundImage = new AnimatedSprite("images/mainmenu/mainmenu.png", 1, 2);
-    title = new AnimatedSprite("images/mainmenu/title.png", 1, 4);
 
     newGameBtn = new Button("images/mainmenu/newgame.png", new PVector(width/2, height/2-40));
     exitBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2+110));
@@ -17,15 +15,11 @@ class MainMenu implements Scene {
     buttons.add(exitBtn);
 
     backgroundImage.setAnimation(0, 1, 2, true);
-    title.setAnimation(0, 3, 2, true);
-
-    title.position = new PVector(width/2 - title.frameWidth/2, 10);
   }
 
   void drawScene() {
     imageMode(CENTER);
     backgroundImage.update();
-    title.update();
 
     for(Button btn : buttons) {
       btn.render();

@@ -6,9 +6,9 @@ class DrownFishGame extends GameScene {
   AnimatedSprite fishBowl;
   AnimatedSprite catte;
 
-  PImage instructions;
-  PImage end;
-  PImage ohno;
+  AnimatedSprite instructions;
+  AnimatedSprite end;
+  AnimatedSprite ohno;
 
   float keyTimerStart;
   float keyTimer;
@@ -23,14 +23,21 @@ class DrownFishGame extends GameScene {
     fishBowl = new AnimatedSprite("images/drownfishgame/bowl.png", 3, 3);
     catte = new AnimatedSprite("images/drownfishgame/catte.png", 2, 1);
 
-    instructions = loadImage("images/drownfishgame/instructions.png");
-    end = loadImage("images/drownfishgame/end.png");
-    ohno = loadImage("images/drownfishgame/ohno.png");
+    instructions = new AnimatedSprite("images/drownfishgame/instructions.png", 1, 2);
+    end = new AnimatedSprite("images/drownfishgame/end.png", 1, 2);
+    ohno = new AnimatedSprite("images/drownfishgame/ohno.png", 1, 2);
 
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
     fishBowl.setAnimation(0, 0, 1, false);
     catte.setAnimation(1, 1, 1, false);
+    instructions.setAnimation(0, 1, 2, true);
+    end.setAnimation(0, 1, 2, true);
+    ohno.setAnimation(0, 1, 2, true);
+
+    instructions.position = new PVector(width/2 - instructions.frameWidth/2, height/2 - instructions.frameHeight/2);
+    end.position = new PVector(width/2 - end.frameWidth/2, height/2 - end.frameHeight/2);
+    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2);
 
     fishBowl.position = new PVector(width/2 - 120, height/2 - 10);
     catte.position = new PVector(width/2 - 70, height/2 -100);
@@ -71,7 +78,7 @@ class DrownFishGame extends GameScene {
 
   @Override void gameStartDraw() {
     imageMode(CORNER);
-    image(instructions, 0, 0);
+    instructions.update();
   }
 
   @Override void gameRunningDraw() {
@@ -86,13 +93,13 @@ class DrownFishGame extends GameScene {
     rect(10, 10, width-20, 10);
 
     imageMode(CORNER);
-    image(ohno, 0, 0);
+    ohno.update();
     gameOverBtn.render();
   }
 
   @Override void gameWinDraw() {
     imageMode(CORNER);
-    image(end, 0, 0);
+    end.update();
   }
 
   void checkForPresses() {
@@ -121,7 +128,7 @@ class DrownFishGame extends GameScene {
 
       waterDrank++;
       fishBowl.setAnimation((int)(waterDrank/2.6), (int)(waterDrank/2.6), 1, false);
-            
+
       catte.setAnimation(waterDrank % 2, waterDrank % 2, 1, false);
 
       if(waterDrank == 20) {

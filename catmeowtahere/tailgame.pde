@@ -3,9 +3,9 @@ class TailGame extends GameScene {
 
   AnimatedSprite player;
 
-  PImage instructions;
-  PImage end;
-  PImage ohno;
+  AnimatedSprite instructions;
+  AnimatedSprite end;
+  AnimatedSprite ohno;
 
   Button gameOverBtn;
 
@@ -22,13 +22,20 @@ class TailGame extends GameScene {
     player = new AnimatedSprite("images/tailgame/player.png", 3, 1);
     gameOverBtn = new Button("images/mainmenu/exit.png", new PVector(width/2, height/2 + 70));
 
-    instructions = loadImage("images/tailgame/instructions.png");
-    end = loadImage("images/tailgame/end.png");
-    ohno = loadImage("images/tailgame/ohno.png");
+    instructions = new AnimatedSprite("images/tailgame/instructions.png", 1, 2);
+    end = new AnimatedSprite("images/tailgame/end.png", 1, 2);
+    ohno = new AnimatedSprite("images/tailgame/ohno.png", 1, 2);
+
+    instructions.position = new PVector(width/2 - instructions.frameWidth/2, height/2 - instructions.frameHeight/2);
+    end.position = new PVector(width/2 - end.frameWidth/2, height/2 - end.frameHeight/2);
+    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2);
 
     keyTimerStart = millis();
 
-    player.setAnimation(0, 0, 10, true);
+    player.setAnimation(0, 0, 2, true);
+    instructions.setAnimation(0, 1, 2, true);
+    ohno.setAnimation(0, 1, 2, true);
+    end.setAnimation(0, 1, 2, true);
     gameTime = 7f;
 
     player.position = new PVector(0, 0);
@@ -51,7 +58,7 @@ class TailGame extends GameScene {
 
   @Override void gameStartDraw() {
     imageMode(CORNER);
-    image(instructions, 0, 0);
+    instructions.update();
   }
 
   @Override void gameRunningDraw() {
@@ -66,13 +73,13 @@ class TailGame extends GameScene {
     rect(10, 10, width-20, 10);
 
     imageMode(CORNER);
-    image(ohno, 0, 0);
+    ohno.update();
     gameOverBtn.render();
   }
 
   @Override void gameWinDraw() {
     imageMode(CORNER);
-    image(end, 0, 0);
+    end.update();
 
     player.setAnimation(2, 2, 1, false);
   }
