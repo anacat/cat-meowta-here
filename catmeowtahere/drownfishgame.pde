@@ -37,7 +37,7 @@ class DrownFishGame extends GameScene {
 
     instructions.position = new PVector(width/2 - instructions.frameWidth/2, height/2 - instructions.frameHeight/2);
     end.position = new PVector(width/2 - end.frameWidth/2, height/2 - end.frameHeight/2);
-    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2);
+    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2 - 40);
 
     fishBowl.position = new PVector(width/2 - 120, height/2 - 10);
     catte.position = new PVector(width/2 - 70, height/2 -100);

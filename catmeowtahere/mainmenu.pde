@@ -61,9 +61,5 @@ class MainMenu implements Scene {
   }
 
   void startScene() {
-    playableGames.add(0);
-    playableGames.add(1);
-    playableGames.add(2);
-    playableGames.add(3);
   }
 }

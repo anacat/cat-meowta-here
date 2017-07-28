@@ -38,7 +38,7 @@ class SlapCatGame extends GameScene {
 
     instructions.position = new PVector(10, 10);
     end.position = new PVector(width/2 - end.frameWidth/2, height/2 - end.frameHeight/2);
-    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2);
+    ohno.position = new PVector(width/2 - ohno.frameWidth/2, height/2 - ohno.frameHeight/2 - 40);
 
     gameTime = 2.5f;
   }

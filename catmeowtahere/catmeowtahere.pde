@@ -56,6 +56,13 @@ Scene getNextMiniGame() {
     return scene;
   }
   else {
+    playableGames = new ArrayList<Integer>(miniGames.size());
+
+    playableGames.add(0);
+    playableGames.add(1);
+    playableGames.add(2);
+    playableGames.add(3);
+
     return finalScene;
   }
 }
